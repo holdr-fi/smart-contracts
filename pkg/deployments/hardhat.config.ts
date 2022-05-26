@@ -1,6 +1,7 @@
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
-import 'hardhat-local-networks-config-plugin';
+import { config } from './solace_fork_scripts/config/hardhat.config';
+// import 'hardhat-local-networks-config-plugin';
 
 import '@balancer-labs/v2-common/setupTests';
 
@@ -13,13 +14,16 @@ import Task, { TaskMode } from './src/task';
 import Verifier from './src/verifier';
 import { Logger } from './src/logger';
 
+import { config as dotenv_config } from 'dotenv';
+dotenv_config();
+
 task('deploy', 'Run deployment task')
   .addParam('id', 'Deployment task ID')
   .addFlag('force', 'Ignore previous deployments')
   .addOptionalParam('key', 'Etherscan API key to verify contracts')
   .setAction(
     async (args: { id: string; force?: boolean; key?: string; verbose?: boolean }, hre: HardhatRuntimeEnvironment) => {
-      Logger.setDefaults(false, args.verbose || false);
+      Logger.setDefaults(true, true);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const apiKey = args.key ?? (hre.config.networks[hre.network.name] as any).verificationAPIKey;
@@ -55,8 +59,4 @@ task(TASK_TEST)
   .addOptionalParam('blockNumber', 'Optional block number to fork in case of running fork tests.', undefined, types.int)
   .setAction(test);
 
-export default {
-  mocha: {
-    timeout: 600000,
-  },
-};
+export default config;
