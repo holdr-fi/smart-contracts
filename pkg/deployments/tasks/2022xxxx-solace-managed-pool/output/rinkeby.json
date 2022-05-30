@@ -1,7 +1,9 @@
 {
-  "Authorizer": "0x533ff626A4096a8dbBAff87007a12e968aB38298",
-  "timestamp": 1653568573269,
-  "Vault": "0xaae081184fdAcb863589C2e4F3D69cB4e2F4cA00",
-  "BalancerHelpers": "0x8be35b0cfc04DAD4e167c95143a816EF0311a57E",
-  "ManagedPoolFactory": "0x0b15e5C54AC67E5c0C16D2c462706A6d7F6e1aFf"
+  "Authorizer": "0x8F123b384995D56daD1aaA37Dd15491e530cd5ba",
+  "timestamp": 1653859945798,
+  "Vault": "0xd1b837b581F69A4fbae294b48ec517c1069d5c96",
+  "BalancerHelpers": "0x8BE9c3417241A3A24432a90aB2Cf1DA65d7058B7",
+  "ManagedPoolFactory": "0xabD61901196346fA267fA3902CCBcf0f8B5393E4",
+  "BaseManagedPoolFactory": "0xa9A22229A506E92cF36Fc7cd28F84E8130c839d3",
+  "TimelockAuthorizer": "0x6fd39Ca37563CE703531A8e293a8622F6AF69660"
 }
