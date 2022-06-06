@@ -1,3 +1,7 @@
+// Could not get deploying ManagedPool.sol to work, seems like it is impossible
+// on testnet currently (6 June 2022) as it exceeds the EIP-170 contract size limit
+// by 150%
+
 import { DAY, MONTH } from '@balancer-labs/v2-helpers/src/time';
 import { config as dotenv_config } from 'dotenv';
 import logger, { Logger } from '../../src/logger';
@@ -6,7 +10,7 @@ import hre from 'hardhat';
 import Task, { TaskMode } from '../../src/task';
 import hardhat from 'hardhat';
 import {
-  NewPoolParams,
+  NewManagedPoolParams,
   BasePoolRights,
   ManagedPoolRights,
   CreateManagedPoolArgs,
@@ -24,7 +28,7 @@ const { ethers } = hardhat;
 dotenv_config();
 Logger.setDefaults(false, true); // (silent: true, verbose: false)
 const verifier = process.env.ETHERSCAN_API_KEY ? new Verifier(hre.network, process.env.ETHERSCAN_API_KEY) : undefined;
-const TASK_ID = '2022xxx1-solace-managed-pool';
+const TASK_ID = '2022xxxx-solace-managed-pool';
 const task = new Task(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
 // Constants
@@ -37,8 +41,8 @@ const bufferPeriodDuration = MONTH;
 // Weights must add up to 1e18
 const TOKEN_ADDRESS: { [token: string]: { address: string; weight: BN } } = {
   ['wbtc']: { address: '0x20fB9CDDbcA5a5EB468c76010AEc6eD4eAcc037F', weight: ONE_HUNDRED_PERCENT.div(4) },
-  ['solace']: {
-    address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
+  ['weth']: {
+    address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
     weight: ONE_HUNDRED_PERCENT.div(4),
   },
   ['usdc']: { address: '0x6D6DC3A8f02a1fEc0B9575e8dDE4135929Bd6e21', weight: ONE_HUNDRED_PERCENT.div(4) },
@@ -223,7 +227,7 @@ async function main() {
       .connect(deployer)
       .getAumProtocolFeesCollector();
 
-    const newPoolParams: NewPoolParams = {
+    const newPoolParams: NewManagedPoolParams = {
       name: 'Solace Managed Pool', // OK
       symbol: 'SMP', // OK
       tokens: tokens,

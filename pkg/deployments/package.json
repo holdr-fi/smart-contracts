@@ -25,7 +25,7 @@
     "lint": "eslint . --ext .ts --ignore-path ../../.eslintignore  --max-warnings 0",
     "prepack": "yarn build",
     "test": "hardhat test ./**/test/*.ts --fork mainnet --block-number 14769900",
-    "solace-fork": "npx hardhat run solace_fork_scripts/aurora/deploy_managed_pool.ts",
+    "solace-fork": "npx hardhat run solace_fork_scripts/aurora/deploy_investment_pool.ts",
     "ci:prepare-config": "ts-node ci/prepare-config.ts"
   },
   "devDependencies": {
