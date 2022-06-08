@@ -3,8 +3,8 @@ import ERC20_ABI from '../constants/abis/ERC20.json';
 import VAULT_ABI from '../../tasks/2022xxxx-solace-investment-pool/abi/Vault.json';
 import INVESTMENT_POOL_ABI from '../../tasks/2022xxxx-solace-investment-pool/abi/InvestmentPool.json';
 import { ethers, BigNumber as BN } from 'ethers';
-import { JoinPoolRequest } from '@balancer-labs/balancer-js';
-import { ONE_HUNDRED_PERCENT, AssetHelpers, ONE_ETHER } from '../utils';
+import { JoinPoolRequest, SingleSwap, FundManagement } from '@balancer-labs/balancer-js';
+import { ONE_HUNDRED_PERCENT, AssetHelpers, ONE_ETHER, ZERO } from '../utils';
 
 const { defaultAbiCoder } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
@@ -33,7 +33,75 @@ const pool = new ethers.Contract(INVESTMENT_POOL_ADDRESS, INVESTMENT_POOL_ABI, w
 
 async function main() {
   console.time('script_run_time');
-  await addInitialLiquidity();
+  await swap();
+}
+
+// https://dev.balancer.fi/resources/swaps/single-swap
+async function swap() {
+  const poolId = await pool.getPoolId();
+
+  const singleswap: SingleSwap = {
+    poolId: poolId,
+    kind: 0, // GIVEN_IN
+    assetIn: TOKENS['frax'].address,
+    assetOut: TOKENS['solace'].address,
+    amount: ONE_ETHER.div(40), // Send in 50 FRAX
+    userData: '0x',
+  };
+
+  const fundManagement: FundManagement = {
+    sender: USER,
+    fromInternalBalance: false,
+    recipient: USER,
+    toInternalBalance: false,
+  };
+
+  const limit = ZERO; // GIVEN_IN - minimum amount of tokens we would like to receive
+
+  const deadline = 1754688515;
+
+  const tx = await vault.swap(singleswap, fundManagement, limit, deadline, {
+    gasLimit: 1000000,
+    gasPrice: ethers.utils.parseUnits('5.0', 'gwei'),
+  });
+
+  console.log(await tx.wait());
+}
+
+async function addLiquidity() {
+  // Get poolId
+  const poolId = await pool.getPoolId();
+
+  // Get assets
+  const assetHelpers = new AssetHelpers(WETH_ADDRESS);
+
+  let tokens = [];
+  for (const entry in TOKENS) {
+    tokens.push(TOKENS[entry].address);
+  }
+  [tokens] = assetHelpers.sortTokens(tokens);
+
+  // Get userData - https://dev.balancer.fi/helpers/encoding
+  // https://dev.balancer.fi/resources/joins-and-exits/pool-joins
+  const JoinKind = 1; // EXACT_TOKENS_IN_FOR_BPT_OUT
+  const exactAmountsIn = [ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20)]; // Must be < maxAmountsIn
+  const abi = ['uint256', 'uint256[]', 'uint256'];
+  const data = [JoinKind, exactAmountsIn, ZERO];
+  const userDataEncoded = defaultAbiCoder.encode(abi, data);
+
+  const request: JoinPoolRequest = {
+    assets: tokens,
+    maxAmountsIn: [ONE_ETHER, ONE_ETHER, ONE_ETHER, ONE_ETHER],
+    userData: userDataEncoded,
+    fromInternalBalance: false,
+  };
+
+  const tx = await vault.joinPool(poolId, USER, USER, request, {
+    gasLimit: 1000000,
+    gasPrice: ethers.utils.parseUnits('5.0', 'gwei'),
+  });
+
+  console.log(tx);
 }
 
 async function addInitialLiquidity() {
