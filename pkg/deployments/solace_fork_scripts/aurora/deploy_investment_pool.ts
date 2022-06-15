@@ -18,6 +18,7 @@ import {
   ZERO_ADDRESS,
   getPredeployedInstance,
   AssetHelpers,
+  ONE_ETHER,
 } from '../utils';
 import { BigNumber as BN, Contract } from 'ethers';
 import InvestmentPoolABI from '../../tasks/2022xxxx-solace-investment-pool/abi/InvestmentPool.json';
@@ -26,27 +27,39 @@ const { ethers } = hardhat;
 // Config
 dotenv_config();
 Logger.setDefaults(false, true); // (silent: true, verbose: false)
-const verifier = process.env.ETHERSCAN_API_KEY ? new Verifier(hre.network, process.env.ETHERSCAN_API_KEY) : undefined;
+const verifier = process.env.AURORASCAN_API_KEY ? new Verifier(hre.network, process.env.AURORASCAN_API_KEY) : undefined;
 const TASK_ID = '2022xxxx-solace-investment-pool';
 const task = new Task(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
 // Vault constants
 const ADMIN = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
-const WETH_ADDRESS = '0xc778417E063141139Fce010982780140Aa0cD5Ab';
+const WETH_ADDRESS = '0xfBc3957C8448824D6b7928f160331ec595D0dC0E';
 const pauseWindowDuration = 3 * MONTH;
 const bufferPeriodDuration = MONTH;
 
 // Tokens must be deployed ERC20 tokens, with decimals <= 18
 // Weights must add up to 1e18
+// Aurora Testnet addresses
 const TOKEN_ADDRESS: { [token: string]: { address: string; weight: BN } } = {
-  ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', weight: ONE_HUNDRED_PERCENT.div(4) },
-  ['solace']: {
-    address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
+  ['usdt']: { address: '0x3D9d7843B3da0E95429BaD2B5165C5B13269F386', weight: ONE_HUNDRED_PERCENT.div(4) },
+  ['aurora']: {
+    address: '0x4cae534FA3bf04eaF17D854f7c6A7D851E277665',
     weight: ONE_HUNDRED_PERCENT.div(4),
   },
-  ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', weight: ONE_HUNDRED_PERCENT.div(4) },
-  ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', weight: ONE_HUNDRED_PERCENT.div(4) },
+  ['weth']: { address: '0x8cacba163be8070760f6ddada7461a558519a9f1', weight: ONE_HUNDRED_PERCENT.div(4) },
+  ['wbtc']: { address: '0x6d80dc92e4599adbae3e4797ebe79c29d0f4c344', weight: ONE_HUNDRED_PERCENT.div(4) },
 };
+
+// Rinkeby values
+// const TOKEN_ADDRESS: { [token: string]: { address: string; weight: BN } } = {
+//   ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', weight: ONE_HUNDRED_PERCENT.div(4) },
+//   ['solace']: {
+//     address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
+//     weight: ONE_HUNDRED_PERCENT.div(4),
+//   },
+//   ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', weight: ONE_HUNDRED_PERCENT.div(4) },
+//   ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', weight: ONE_HUNDRED_PERCENT.div(4) },
+// };
 
 // Types
 let newPoolParams: NewInvestmentPoolParams;
@@ -70,11 +83,13 @@ async function main() {
   await deployAuthorizer();
   await deployVault();
   await deployBalancerHelpers();
+  await deployWeightedPoolFactory();
+  await deployWeightedPool2TokensFactory();
   await deployInvestmentPoolFactory();
   await deployInvestmentPool();
 
   // Verify contracts
-  await verifyContracts();
+  // await verifyContracts();
   await verifyInvestmentPool();
 
   /*******************
@@ -135,6 +150,50 @@ async function main() {
 
   async function deployBalancerHelpers(force = false) {
     const CONTRACT_NAME = 'BalancerHelpers';
+    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
+  async function deployWeightedPoolFactory(force = false) {
+    const CONTRACT_NAME = 'WeightedPoolFactory';
+    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
+  async function deployWeightedPool2TokensFactory(force = false) {
+    const CONTRACT_NAME = 'WeightedPool2TokensFactory';
     const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
 
     const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
@@ -225,15 +284,15 @@ async function main() {
       const log = await tx.wait();
 
       if (log.events && log.events[0] && log.events[0].address && deployer.provider) {
-        const MANAGED_POOL_ADDRESS = log.events[0].address;
-        logger.success(`Deployed ManagedPool at ${MANAGED_POOL_ADDRESS}`);
+        const INVESTMENT_POOL_ADDRESS = log.events[0].address;
+        logger.success(`Deployed InvestmentPool at ${INVESTMENT_POOL_ADDRESS}`);
 
         const pool_deploy_block = log.blockNumber;
         const { timestamp } = await deployer.provider.getBlock(pool_deploy_block);
         pool_deploy_timestamp = BN.from(timestamp);
 
         CONTRACTS[CONTRACT_NAME] = {
-          address: MANAGED_POOL_ADDRESS,
+          address: INVESTMENT_POOL_ADDRESS,
           constructor_args: [],
           predeployed: false,
         };
@@ -241,6 +300,12 @@ async function main() {
     } else {
       logger.error('Could not find InvestmentPoolFactory instance');
     }
+  }
+
+  async function deployERC20(name: string, symbol: string, force = false) {
+    const CONTRACT_NAME = 'MockERC20';
+    const CONSTRUCTOR_ARGS = [name, symbol, ONE_ETHER.mul(1000000)];
+    await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
   }
 
   /*******************
@@ -268,6 +333,22 @@ async function main() {
       );
     }
 
+    // if (force || !CONTRACTS['WeightedPoolFactory'].predeployed) {
+    await task.verify(
+      'WeightedPoolFactory',
+      CONTRACTS['WeightedPoolFactory'].address,
+      CONTRACTS['WeightedPoolFactory'].constructor_args
+    );
+    // }
+
+    if (force || !CONTRACTS['WeightedPool2TokensFactory'].predeployed) {
+      await task.verify(
+        'WeightedPool2TokensFactory',
+        CONTRACTS['WeightedPool2TokensFactory'].address,
+        CONTRACTS['WeightedPool2TokensFactory'].constructor_args
+      );
+    }
+
     if (force || !CONTRACTS['InvestmentPoolFactory'].predeployed) {
       await task.verify(
         'InvestmentPoolFactory',
@@ -277,8 +358,16 @@ async function main() {
     }
   }
 
-  async function verifyInvestmentPool(force = false) {
-    const instance = new ethers.Contract(CONTRACTS['InvestmentPool'].address, InvestmentPoolABI, deployer.provider);
+  async function verifyInvestmentPool(address?: string, force = false) {
+    let INVESTMENT_POOL_ADDRESS: string;
+
+    if (address) {
+      INVESTMENT_POOL_ADDRESS = address;
+    } else {
+      INVESTMENT_POOL_ADDRESS = CONTRACTS['InvestmentPool'].address;
+    }
+
+    const instance = new ethers.Contract(INVESTMENT_POOL_ADDRESS, InvestmentPoolABI, deployer.provider);
     const [, pauseWindowEndTime, bufferPeriodEndTime] = await instance.getPausedState();
     const assetManagers: string[] = Array(newPoolParams.tokens.length).fill(ZERO_ADDRESS);
 
@@ -303,8 +392,8 @@ async function main() {
     ];
 
     let retries = 0;
-    while (retries <= 3) {
-      await task.verify('InvestmentPool', CONTRACTS['InvestmentPool'].address, CONSTRUCTOR_ARGS);
+    while (retries <= 10) {
+      await task.verify('InvestmentPool', INVESTMENT_POOL_ADDRESS, CONSTRUCTOR_ARGS);
       retries += 1;
       // Tried try-catch block here, catch block doesn't catch failed verifies so pointless
     }

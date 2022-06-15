@@ -1,3 +1,14 @@
+# Solace Fork instructions
+
+Go to `/pkg/deployments`
+- Create .env file here using .env.example as a template
+
+- `yarn solace-fork-deploy` => Deploy InvestmentPool
+    - May need to modify `balancer-v2-monorepo/pkg/deployments/solace_fork_scripts/aurora/deploy_investment_pool.ts`
+
+- `yarn solace-fork-add` => Add liquidity to InvestmentPool
+    - May need to modify `balancer-v2-monorepo/pkg/deployments/solace_fork_scripts/aurora/add_liquidity.ts`
+
 # <img src="logo.svg" alt="Balancer" height="128px">
 
 # Balancer V2 Monorepo

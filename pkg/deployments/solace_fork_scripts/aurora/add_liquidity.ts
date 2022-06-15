@@ -9,31 +9,43 @@ import { ONE_HUNDRED_PERCENT, AssetHelpers, ONE_ETHER, ZERO } from '../utils';
 const { defaultAbiCoder } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 
-const WETH_ADDRESS = '0xc778417E063141139Fce010982780140Aa0cD5Ab';
-const INVESTMENT_POOL_ADDRESS = '0x8B021079eeD6EEA7a495369f70374272DC1A8311';
-const VAULT_ADDRESS = '0x0FFf9f3044244048802B5AB4540e2014d1C0688A';
+const WETH_ADDRESS = '0x8cacba163be8070760f6ddada7461a558519a9f1';
+const INVESTMENT_POOL_ADDRESS = '0x6fF82f9C6E4e64150410c484632746bD0BE30bAC';
+const VAULT_ADDRESS = '0x39526464ac81f75009a8c1e425f2340e7f1ddfd4';
 const USER = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
 
+// const TOKENS: { [token: string]: { address: string; amount: BN } } = {
+//   ['solace']: {
+//     address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
+//     amount: ONE_ETHER.mul(20),
+//   },
+//   ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', amount: ONE_ETHER.mul(20) },
+//   ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', amount: ONE_ETHER.mul(20) },
+//   ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', amount: ONE_ETHER.mul(20) },
+// };
+
 const TOKENS: { [token: string]: { address: string; amount: BN } } = {
-  ['solace']: {
-    address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
-    amount: ONE_ETHER.mul(20),
+  ['usdt']: { address: '0x3D9d7843B3da0E95429BaD2B5165C5B13269F386', amount: ONE_ETHER.mul(100) },
+  ['aurora']: {
+    address: '0x4cae534FA3bf04eaF17D854f7c6A7D851E277665',
+    amount: ONE_ETHER.mul(100),
   },
-  ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', amount: ONE_ETHER.mul(20) },
-  ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', amount: ONE_ETHER.mul(20) },
-  ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', amount: ONE_ETHER.mul(20) },
+  ['weth']: { address: '0x8cacba163be8070760f6ddada7461a558519a9f1', amount: ONE_ETHER.mul(100) },
+  ['wbtc']: { address: '0x6d80dc92e4599adbae3e4797ebe79c29d0f4c344', amount: ONE_ETHER.mul(100) },
 };
 
 dotenv_config();
 const priv_key = JSON.parse(process.env.RINKEBY_ACCOUNTS || '[]')[0];
-const provider = new ethers.providers.JsonRpcProvider(process.env.RINKEBY_URL);
+const provider = new ethers.providers.JsonRpcProvider(process.env.AURORA_TESTNET_URL);
+// const provider = new ethers.providers.JsonRpcProvider(process.env.RINKEBY_URL);
 const wallet = new ethers.Wallet(priv_key, provider);
 const vault = new ethers.Contract(VAULT_ADDRESS, VAULT_ABI, wallet);
 const pool = new ethers.Contract(INVESTMENT_POOL_ADDRESS, INVESTMENT_POOL_ABI, wallet);
 
 async function main() {
   console.time('script_run_time');
-  await swap();
+  await doTokenApprovals();
+  await addInitialLiquidity();
 }
 
 // https://dev.balancer.fi/resources/swaps/single-swap
@@ -84,14 +96,14 @@ async function addLiquidity() {
   // Get userData - https://dev.balancer.fi/helpers/encoding
   // https://dev.balancer.fi/resources/joins-and-exits/pool-joins
   const JoinKind = 1; // EXACT_TOKENS_IN_FOR_BPT_OUT
-  const exactAmountsIn = [ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20)]; // Must be < maxAmountsIn
+  const exactAmountsIn = [ONE_ETHER.div(3), ONE_ETHER.div(3), ONE_ETHER.div(3), ONE_ETHER.div(3)]; // Must be < maxAmountsIn
   const abi = ['uint256', 'uint256[]', 'uint256'];
   const data = [JoinKind, exactAmountsIn, ZERO];
   const userDataEncoded = defaultAbiCoder.encode(abi, data);
 
   const request: JoinPoolRequest = {
     assets: tokens,
-    maxAmountsIn: [ONE_ETHER, ONE_ETHER, ONE_ETHER, ONE_ETHER],
+    maxAmountsIn: [ONE_ETHER.mul(100), ONE_ETHER.mul(100), ONE_ETHER.mul(100), ONE_ETHER.mul(100)],
     userData: userDataEncoded,
     fromInternalBalance: false,
   };
@@ -101,7 +113,7 @@ async function addLiquidity() {
     gasPrice: ethers.utils.parseUnits('5.0', 'gwei'),
   });
 
-  console.log(tx);
+  console.log(await tx.wait());
 }
 
 async function addInitialLiquidity() {
@@ -111,7 +123,7 @@ async function addInitialLiquidity() {
   // Get assets
   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
 
-  let tokens = [];
+  let tokens: string[] = [];
   for (const entry in TOKENS) {
     tokens.push(TOKENS[entry].address);
   }
@@ -119,14 +131,14 @@ async function addInitialLiquidity() {
 
   // Get userData - https://dev.balancer.fi/helpers/encoding
   const JoinKindInit = 0;
-  const initBalances = [ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20), ONE_ETHER.div(20)]; // Must be < maxAmountsIn
+  const initBalances = [ONE_ETHER.mul(100), ONE_ETHER.mul(100), ONE_ETHER.mul(100), ONE_ETHER.mul(100)]; // Must be < maxAmountsIn
   const abi = ['uint256', 'uint256[]'];
   const data = [JoinKindInit, initBalances];
   const userDataEncoded = defaultAbiCoder.encode(abi, data);
 
   const request: JoinPoolRequest = {
     assets: tokens,
-    maxAmountsIn: [ONE_ETHER, ONE_ETHER, ONE_ETHER, ONE_ETHER],
+    maxAmountsIn: [ONE_ETHER.mul(200), ONE_ETHER.mul(200), ONE_ETHER.mul(200), ONE_ETHER.mul(200)],
     userData: userDataEncoded,
     fromInternalBalance: false,
   };
@@ -140,20 +152,20 @@ async function addInitialLiquidity() {
 }
 
 async function doTokenApprovals() {
-  const promises = [];
+  // const promises: Promise<any>[] = [];
 
   for (const token in TOKENS) {
     const { address } = TOKENS[token];
     const token_instance = new ethers.Contract(address, ERC20_ABI, wallet);
-    promises.push(
-      token_instance.approve(VAULT_ADDRESS, MaxUint256, {
-        gasLimit: 100000,
-        gasPrice: ethers.utils.parseUnits('5.0', 'gwei'),
-      })
-    );
+    // promises.push(
+    await token_instance.approve(VAULT_ADDRESS, MaxUint256, {
+      gasLimit: 100000,
+      gasPrice: ethers.utils.parseUnits('5.0', 'gwei'),
+    });
+    // );
   }
 
-  await Promise.all(promises);
+  // await Promise.all(promises);
 }
 
 main()
