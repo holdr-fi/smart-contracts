@@ -22,6 +22,7 @@ import {
 } from '../utils';
 import { BigNumber as BN, Contract } from 'ethers';
 import InvestmentPoolABI from '../../tasks/2022xxxx-solace-investment-pool/abi/InvestmentPool.json';
+import BatchRelayerLibraryABI from '../../tasks/2022xxxx-solace-investment-pool/abi/BatchRelayerLibrary.json';
 const { ethers } = hardhat;
 
 // Config
@@ -86,11 +87,15 @@ async function main() {
   await deployWeightedPoolFactory();
   await deployWeightedPool2TokensFactory();
   await deployInvestmentPoolFactory();
-  await deployInvestmentPool();
+  // await deployInvestmentPool();
+  await deployRelayerLibrary();
+  await deployMultiCall2();
 
   // Verify contracts
   // await verifyContracts();
-  await verifyInvestmentPool();
+  // await verifyInvestmentPool();
+  // await verifyRelayer();
+  await verifyMulticall();
 
   /*******************
     DEPLOY CLOSURES
@@ -302,6 +307,50 @@ async function main() {
     }
   }
 
+  async function deployRelayerLibrary(force = false) {
+    const CONTRACT_NAME = 'BatchRelayerLibrary';
+    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address, ZERO_ADDRESS];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
+  async function deployMultiCall2(force = false) {
+    const CONTRACT_NAME = 'Multicall2';
+    const CONSTRUCTOR_ARGS: string[] = [];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
   async function deployERC20(name: string, symbol: string, force = false) {
     const CONTRACT_NAME = 'MockERC20';
     const CONSTRUCTOR_ARGS = [name, symbol, ONE_ETHER.mul(1000000)];
@@ -396,6 +445,37 @@ async function main() {
       await task.verify('InvestmentPool', INVESTMENT_POOL_ADDRESS, CONSTRUCTOR_ARGS);
       retries += 1;
       // Tried try-catch block here, catch block doesn't catch failed verifies so pointless
+    }
+  }
+
+  async function verifyRelayer(force = false) {
+    if (force || !CONTRACTS['BatchRelayerLibrary'].predeployed) {
+      await task.verify(
+        'BatchRelayerLibrary',
+        CONTRACTS['BatchRelayerLibrary'].address,
+        CONTRACTS['BatchRelayerLibrary'].constructor_args
+      );
+    }
+
+    const instance = new ethers.Contract(
+      CONTRACTS['BatchRelayerLibrary'].address,
+      BatchRelayerLibraryABI,
+      deployer.provider
+    );
+
+    const RELAYER_ADDRESS = await instance.getEntrypoint();
+
+    const RELAYER_CONSTRUCTOR_ARGS = [
+      CONTRACTS['InvestmentPoolFactory'].address,
+      CONTRACTS['BatchRelayerLibrary'].address,
+    ];
+
+    await task.verify('BalancerRelayer', RELAYER_ADDRESS, RELAYER_CONSTRUCTOR_ARGS);
+  }
+
+  async function verifyMulticall(force = false) {
+    if (force || !CONTRACTS['Multicall2'].predeployed) {
+      await task.verify('Multicall2', CONTRACTS['Multicall2'].address, CONTRACTS['Multicall2'].constructor_args);
     }
   }
 }
