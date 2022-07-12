@@ -2,12 +2,33 @@
 
 Go to `/pkg/deployments`
 - Create .env file here using .env.example as a template
+    - Insert private key of desired deployer into `RINKEBY_ACCOUNTS` array
+
+- Modify `pkg/deployments/solace_fork_scripts/config/hardhat.config.ts` as required - may need to add/change default network
 
 - `yarn solace-fork-deploy` => Deploy InvestmentPool
     - May need to modify `balancer-v2-monorepo/pkg/deployments/solace_fork_scripts/aurora/deploy_investment_pool.ts`
 
 - `yarn solace-fork-add` => Add liquidity to InvestmentPool
     - May need to modify `balancer-v2-monorepo/pkg/deployments/solace_fork_scripts/aurora/add_liquidity.ts`
+
+## Transferring admin privileges
+
+- One admin set in constructor for TimelockAuthorizer. This is the 'root user' for the Vault.
+
+- A separate owner for InvestmentPool - setSwapEnabled, withdrawCollectedManagementFees, updateWeightsGradually
+
+- TimelockAuthorizer seems to offer a single path to changing the 'root user'
+    - OLD_ROOT call scheduleRootChange(NEW_ROOT, [ARRAY_OF_ADDRESS_WHO_CAN_CALL_EXECUTE])
+    - After _rootTransferDelay (set in constructor, recommended appears to be 1 month) time period, OLD_ROOT call execute(...)
+    - NEW_ROOT call claimRoot()
+
+0x7edc3B932b9f804cAEC28d93Edf482604DF79857
+0x1b3c85eb0000000000000000000000006e3b756688db28aaaa5707562f4eb88e80a92614
+false
+false
+true
+1657622486
 
 # <img src="logo.svg" alt="Balancer" height="128px">
 

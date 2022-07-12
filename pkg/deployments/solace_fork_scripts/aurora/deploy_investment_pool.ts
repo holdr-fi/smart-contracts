@@ -2,9 +2,7 @@
 // Relevant contract - https://etherscan.io/address/0x48767F9F868a4A7b86A90736632F6E44C2df7fa9#code
 // https://etherscan.deth.net/address/0x48767F9F868a4A7b86A90736632F6E44C2df7fa9#code
 
-// Good question - is InvestmentPool from Sep 2021, compatible with latest Vault, TimelockAuthorizer and BalancerHelpers?
-
-import { MONTH } from '@balancer-labs/v2-helpers/src/time';
+import { MONTH, WEEK } from '@balancer-labs/v2-helpers/src/time';
 import { config as dotenv_config } from 'dotenv';
 import logger, { Logger } from '../../src/logger';
 import Verifier from '../../src/verifier';
@@ -33,8 +31,8 @@ const TASK_ID = '2022xxxx-solace-investment-pool';
 const task = new Task(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
 // Vault constants
-const ADMIN = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
-const WETH_ADDRESS = '0xfBc3957C8448824D6b7928f160331ec595D0dC0E';
+const ADMIN = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15'; // How to change admin?
+const WETH_ADDRESS = '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB';
 const pauseWindowDuration = 3 * MONTH;
 const bufferPeriodDuration = MONTH;
 
@@ -87,15 +85,15 @@ async function main() {
   await deployWeightedPoolFactory();
   await deployWeightedPool2TokensFactory();
   await deployInvestmentPoolFactory();
-  // await deployInvestmentPool();
   await deployRelayerLibrary();
   await deployMultiCall2();
+  // await deployInvestmentPool();
 
   // Verify contracts
-  // await verifyContracts();
-  // await verifyInvestmentPool();
-  // await verifyRelayer();
+  await verifyContracts();
+  await verifyRelayer();
   await verifyMulticall();
+  // await verifyInvestmentPool();
 
   /*******************
     DEPLOY CLOSURES
@@ -104,7 +102,7 @@ async function main() {
   // Define function inside main() so it is like a closure - has access to variables defined in main()
   async function deployAuthorizer(force = false) {
     const CONTRACT_NAME = 'TimelockAuthorizer';
-    const CONSTRUCTOR_ARGS = [ADMIN, ZERO_ADDRESS, MONTH];
+    const CONSTRUCTOR_ARGS = [ADMIN, ZERO_ADDRESS, WEEK];
 
     let instance: Contract;
     const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
@@ -241,6 +239,50 @@ async function main() {
     };
   }
 
+  async function deployMultiCall2(force = false) {
+    const CONTRACT_NAME = 'Multicall2';
+    const CONSTRUCTOR_ARGS: string[] = [];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
+  async function deployRelayerLibrary(force = false) {
+    const CONTRACT_NAME = 'BatchRelayerLibrary';
+    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address, ZERO_ADDRESS];
+
+    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
+
+    let instance: Contract;
+
+    if (force || !PREDEPLOYED_INSTANCE) {
+      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
+    } else {
+      instance = PREDEPLOYED_INSTANCE;
+    }
+
+    CONTRACTS[CONTRACT_NAME] = {
+      address: instance.address,
+      constructor_args: CONSTRUCTOR_ARGS,
+      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
+      instance: instance,
+    };
+  }
+
   async function deployInvestmentPool(force = false) {
     const CONTRACT_NAME = 'InvestmentPool';
 
@@ -307,50 +349,6 @@ async function main() {
     }
   }
 
-  async function deployRelayerLibrary(force = false) {
-    const CONTRACT_NAME = 'BatchRelayerLibrary';
-    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address, ZERO_ADDRESS];
-
-    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
-
-    let instance: Contract;
-
-    if (force || !PREDEPLOYED_INSTANCE) {
-      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
-    } else {
-      instance = PREDEPLOYED_INSTANCE;
-    }
-
-    CONTRACTS[CONTRACT_NAME] = {
-      address: instance.address,
-      constructor_args: CONSTRUCTOR_ARGS,
-      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
-      instance: instance,
-    };
-  }
-
-  async function deployMultiCall2(force = false) {
-    const CONTRACT_NAME = 'Multicall2';
-    const CONSTRUCTOR_ARGS: string[] = [];
-
-    const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
-
-    let instance: Contract;
-
-    if (force || !PREDEPLOYED_INSTANCE) {
-      instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
-    } else {
-      instance = PREDEPLOYED_INSTANCE;
-    }
-
-    CONTRACTS[CONTRACT_NAME] = {
-      address: instance.address,
-      constructor_args: CONSTRUCTOR_ARGS,
-      predeployed: force || !PREDEPLOYED_INSTANCE ? false : true,
-      instance: instance,
-    };
-  }
-
   async function deployERC20(name: string, symbol: string, force = false) {
     const CONTRACT_NAME = 'MockERC20';
     const CONSTRUCTOR_ARGS = [name, symbol, ONE_ETHER.mul(1000000)];
@@ -405,8 +403,46 @@ async function main() {
         CONTRACTS['InvestmentPoolFactory'].constructor_args
       );
     }
+
+    // if (force || !CONTRACTS['Multicall2'].predeployed) {
+    //   await task.verify('Multicall2', CONTRACTS['Multicall2'].address, CONTRACTS['Multicall2'].constructor_args);
+    // }
   }
 
+  // Require distinct function to verify BatchRelayer because it is contained in two contracts:
+  // BatchRelayerLibrary and BatchRelayer
+  async function verifyRelayer(force = false) {
+    if (force || !CONTRACTS['BatchRelayerLibrary'].predeployed) {
+      await task.verify(
+        'BatchRelayerLibrary',
+        CONTRACTS['BatchRelayerLibrary'].address,
+        CONTRACTS['BatchRelayerLibrary'].constructor_args
+      );
+    }
+
+    const instance = new ethers.Contract(
+      CONTRACTS['BatchRelayerLibrary'].address,
+      BatchRelayerLibraryABI,
+      deployer.provider
+    );
+
+    const RELAYER_ADDRESS = await instance.getEntrypoint();
+
+    const RELAYER_CONSTRUCTOR_ARGS = [
+      CONTRACTS['InvestmentPoolFactory'].address,
+      CONTRACTS['BatchRelayerLibrary'].address,
+    ];
+
+    await task.verify('BalancerRelayer', RELAYER_ADDRESS, RELAYER_CONSTRUCTOR_ARGS);
+  }
+
+  async function verifyMulticall(force = false) {
+    if (force || !CONTRACTS['Multicall2'].predeployed) {
+      await task.verify('Multicall2', CONTRACTS['Multicall2'].address, CONTRACTS['Multicall2'].constructor_args);
+    }
+  }
+
+  // We didn't create InvestmentPool through its constructor, so require different method to verify
   async function verifyInvestmentPool(address?: string, force = false) {
     let INVESTMENT_POOL_ADDRESS: string;
 
@@ -445,37 +481,6 @@ async function main() {
       await task.verify('InvestmentPool', INVESTMENT_POOL_ADDRESS, CONSTRUCTOR_ARGS);
       retries += 1;
       // Tried try-catch block here, catch block doesn't catch failed verifies so pointless
-    }
-  }
-
-  async function verifyRelayer(force = false) {
-    if (force || !CONTRACTS['BatchRelayerLibrary'].predeployed) {
-      await task.verify(
-        'BatchRelayerLibrary',
-        CONTRACTS['BatchRelayerLibrary'].address,
-        CONTRACTS['BatchRelayerLibrary'].constructor_args
-      );
-    }
-
-    const instance = new ethers.Contract(
-      CONTRACTS['BatchRelayerLibrary'].address,
-      BatchRelayerLibraryABI,
-      deployer.provider
-    );
-
-    const RELAYER_ADDRESS = await instance.getEntrypoint();
-
-    const RELAYER_CONSTRUCTOR_ARGS = [
-      CONTRACTS['InvestmentPoolFactory'].address,
-      CONTRACTS['BatchRelayerLibrary'].address,
-    ];
-
-    await task.verify('BalancerRelayer', RELAYER_ADDRESS, RELAYER_CONSTRUCTOR_ARGS);
-  }
-
-  async function verifyMulticall(force = false) {
-    if (force || !CONTRACTS['Multicall2'].predeployed) {
-      await task.verify('Multicall2', CONTRACTS['Multicall2'].address, CONTRACTS['Multicall2'].constructor_args);
     }
   }
 }
