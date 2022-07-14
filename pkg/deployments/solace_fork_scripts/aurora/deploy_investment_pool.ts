@@ -28,6 +28,8 @@ dotenv_config();
 Logger.setDefaults(false, true); // (silent: true, verbose: false)
 const verifier = process.env.AURORASCAN_API_KEY ? new Verifier(hre.network, process.env.AURORASCAN_API_KEY) : undefined;
 const TASK_ID = '2022xxxx-solace-investment-pool';
+// const TASK_ID = '20210418-weighted-pool'; // Unable to verify WeightedPoolFactory with TASK_ID = '2022xxxx-solace-investment-pool'
+// for some mysterious reason, even though ABIs and build files are copy-pasted from '20210418-weighted-pool'
 const task = new Task(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
 // Vault constants
@@ -175,7 +177,8 @@ async function main() {
 
   async function deployWeightedPoolFactory(force = false) {
     const CONTRACT_NAME = 'WeightedPoolFactory';
-    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
+    // const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
+    const CONSTRUCTOR_ARGS = ['0x39526464ac81f75009a8c1e425f2340e7f1ddfd4'];
 
     const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
 
@@ -380,13 +383,13 @@ async function main() {
       );
     }
 
-    // if (force || !CONTRACTS['WeightedPoolFactory'].predeployed) {
-    await task.verify(
-      'WeightedPoolFactory',
-      CONTRACTS['WeightedPoolFactory'].address,
-      CONTRACTS['WeightedPoolFactory'].constructor_args
-    );
-    // }
+    if (force || !CONTRACTS['WeightedPoolFactory'].predeployed) {
+      await task.verify(
+        'WeightedPoolFactory',
+        CONTRACTS['WeightedPoolFactory'].address,
+        CONTRACTS['WeightedPoolFactory'].constructor_args
+      );
+    }
 
     if (force || !CONTRACTS['WeightedPool2TokensFactory'].predeployed) {
       await task.verify(
@@ -403,10 +406,6 @@ async function main() {
         CONTRACTS['InvestmentPoolFactory'].constructor_args
       );
     }
-
-    // if (force || !CONTRACTS['Multicall2'].predeployed) {
-    //   await task.verify('Multicall2', CONTRACTS['Multicall2'].address, CONTRACTS['Multicall2'].constructor_args);
-    // }
   }
 
   // Require distinct function to verify BatchRelayer because it is contained in two contracts:
