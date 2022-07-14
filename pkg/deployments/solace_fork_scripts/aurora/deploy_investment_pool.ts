@@ -177,8 +177,7 @@ async function main() {
 
   async function deployWeightedPoolFactory(force = false) {
     const CONTRACT_NAME = 'WeightedPoolFactory';
-    // const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
-    const CONSTRUCTOR_ARGS = ['0x39526464ac81f75009a8c1e425f2340e7f1ddfd4'];
+    const CONSTRUCTOR_ARGS = [CONTRACTS['Vault'].address];
 
     const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
 
