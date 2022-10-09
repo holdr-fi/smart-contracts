@@ -11,7 +11,6 @@ import { deploy } from '@balancer-labs/v2-helpers/src/contract';
 import { MONTH } from '@balancer-labs/v2-helpers/src/time';
 import Vault from '@balancer-labs/v2-helpers/src/models/vault/Vault';
 import * as expectEvent from '@balancer-labs/v2-helpers/src/test/expectEvent';
-import { encodeInvestmentConfig } from '@balancer-labs/v2-asset-manager-utils/test/helpers/rebalance';
 import { ZERO_ADDRESS } from '@balancer-labs/v2-helpers/src/constants';
 import TypesConverter from '@balancer-labs/v2-helpers/src/models/types/TypesConverter';
 
@@ -44,7 +43,7 @@ sharedBeforeEach('deploy Vault, asset manager, and tokens', async () => {
   allTokens = await TokenList.create(['MKR', 'DAI', 'SNX', 'BAT'], { sorted: true });
   await allTokens.mint({ to: manager, amount: fp(100) });
 
-  assetManager = await deploy('v2-asset-manager-utils/MockAssetManager', { args: [allTokens.DAI.address] });
+  assetManager = await deploy('MockAssetManager', { args: [allTokens.DAI.address] });
 });
 
 async function deployControllerAndPool(canTransfer = true, canChangeSwapFee = true, canUpdateMetadata = true) {
@@ -73,9 +72,6 @@ async function deployControllerAndPool(canTransfer = true, canChangeSwapFee = tr
 }
 
 describe('BasePoolController', function () {
-  const NEW_SWAP_FEE = fp(0.05);
-  const NEXT_SWAP_FEE = fp(0.005);
-
   context('pool controller not initialized', () => {
     sharedBeforeEach('deploy controller (default permissions)', async () => {
       await deployControllerAndPool();
@@ -87,12 +83,6 @@ describe('BasePoolController', function () {
 
     it('sets up the pool controller', async () => {
       expect(await poolController.getManager()).to.equal(manager.address);
-    });
-
-    it('cannot call functions before initialization', async () => {
-      await expect(poolController.connect(manager).setSwapFeePercentage(NEW_SWAP_FEE)).to.be.revertedWith(
-        'UNINITIALIZED_POOL_CONTROLLER'
-      );
     });
 
     it('sets all permissions', async () => {
@@ -137,68 +127,6 @@ describe('BasePoolController', function () {
       await deployControllerAndPool();
       await poolController.initialize(pool.address);
     });
-
-    describe('set swap fee', () => {
-      it('sets the swap fee controller to the manager', async () => {
-        expect(await poolController.getSwapFeeController()).to.equal(manager.address);
-      });
-
-      it('lets the manager set the swap fee', async () => {
-        await poolController.connect(manager).setSwapFeePercentage(NEW_SWAP_FEE);
-
-        expect(await pool.getSwapFeePercentage()).to.equal(NEW_SWAP_FEE);
-      });
-
-      it('reverts if non-manager sets the swap fee', async () => {
-        await expect(poolController.connect(other).setSwapFeePercentage(NEW_SWAP_FEE)).to.be.revertedWith(
-          'SENDER_NOT_ALLOWED'
-        );
-      });
-
-      context('when the manager delegates swap fees', () => {
-        sharedBeforeEach('delegate control of swap fees', async () => {
-          await poolController.connect(manager).setSwapFeeController(other.address);
-        });
-
-        it('sets the swap fee controller to the delegate', async () => {
-          expect(await poolController.getSwapFeeController()).to.equal(other.address);
-        });
-
-        it('the manager can no longer set the swap fee', async () => {
-          await expect(poolController.connect(manager).setSwapFeePercentage(NEW_SWAP_FEE)).to.be.revertedWith(
-            'SENDER_NOT_ALLOWED'
-          );
-        });
-
-        it('the delegate can set the swap fee', async () => {
-          await poolController.connect(other).setSwapFeePercentage(NEW_SWAP_FEE);
-
-          expect(await pool.getSwapFeePercentage()).to.equal(NEW_SWAP_FEE);
-        });
-      });
-    });
-
-    describe('set asset manager config', () => {
-      const poolConfig = {
-        targetPercentage: 3,
-        upperCriticalPercentage: 4,
-        lowerCriticalPercentage: 2,
-      };
-
-      it('lets the manager set the asset manager config', async () => {
-        await poolController
-          .connect(manager)
-          .setAssetManagerPoolConfig(allTokens.DAI.address, encodeInvestmentConfig(poolConfig));
-      });
-
-      it('reverts if non-manager sets the asset manager config', async () => {
-        await expect(
-          poolController
-            .connect(other)
-            .setAssetManagerPoolConfig(allTokens.DAI.address, encodeInvestmentConfig(poolConfig))
-        ).to.be.revertedWith('CALLER_IS_NOT_OWNER');
-      });
-    });
   });
 
   describe('pool controller permissions', () => {
@@ -213,7 +141,7 @@ describe('BasePoolController', function () {
 
       it('reverts if the manager transfers ownership', async () => {
         await expect(poolController.connect(manager).transferOwnership(other.address)).to.be.revertedWith(
-          'UNAUTHORIZED_OPERATION'
+          'FEATURE_DISABLED'
         );
       });
     });
@@ -252,16 +180,6 @@ describe('BasePoolController', function () {
         // Now the manager has changed
         expect(await poolController.getManager()).to.equal(other.address);
         expect(await poolController.getManagerCandidate()).to.equal(ZERO_ADDRESS);
-
-        // Transferring ownership does not transfer swap fee controller
-        await expect(poolController.connect(other).setSwapFeePercentage(NEXT_SWAP_FEE)).to.be.revertedWith(
-          'SENDER_NOT_ALLOWED'
-        );
-
-        // Original swap fee controller can still do it
-        await poolController.connect(manager).setSwapFeePercentage(NEXT_SWAP_FEE);
-
-        expect(await pool.getSwapFeePercentage()).to.equal(NEXT_SWAP_FEE);
       });
     });
 
@@ -278,12 +196,6 @@ describe('BasePoolController', function () {
       it('sets the swap fee controller to zero', async () => {
         expect(await poolController.getSwapFeeController()).to.equal(ZERO_ADDRESS);
       });
-
-      it('reverts if manager sets the swap fee', async () => {
-        await expect(poolController.connect(manager).setSwapFeePercentage(NEW_SWAP_FEE)).to.be.revertedWith(
-          'UNAUTHORIZED_OPERATION'
-        );
-      });
     });
 
     context('with update metadata set to false', () => {
@@ -297,9 +209,7 @@ describe('BasePoolController', function () {
       });
 
       it('reverts if the manager updates metadata', async () => {
-        await expect(poolController.connect(manager).updateMetadata(METADATA)).to.be.revertedWith(
-          'UNAUTHORIZED_OPERATION'
-        );
+        await expect(poolController.connect(manager).updateMetadata(METADATA)).to.be.revertedWith('FEATURE_DISABLED');
       });
     });
   });
