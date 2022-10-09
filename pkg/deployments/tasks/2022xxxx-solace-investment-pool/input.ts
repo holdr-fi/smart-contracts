@@ -1,6 +1,6 @@
 import Task, { TaskMode } from '../../src/task';
 
-export type InvestmentPoolDeployment = {
+export type UnbuttonAaveLinearPoolDeployment = {
   Vault: string;
 };
 

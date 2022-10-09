@@ -1,6 +1,6 @@
 import Task, { TaskMode } from '../../../src/task';
 
-export type MerkleOrchardDeployment = {
+export type UnbuttonAaveLinearPoolDeployment = {
   Vault: string;
 };
 

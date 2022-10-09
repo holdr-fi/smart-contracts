@@ -1,4 +1,4 @@
-# 2022-xx-xx - Timelock Authorizer
+# 2022-07-04 - Timelock Authorizer
 
 Deployment of the `TimelockAuthorizer` in order to replace the current authorizer of the Vault.
 
