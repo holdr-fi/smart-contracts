@@ -1,5 +1,5 @@
 ## Transferring admin privileges
-
+ 
 - One admin set in constructor for TimelockAuthorizer. This is the 'root user' for the Vault.
 
 - A separate owner for InvestmentPool - setSwapEnabled, withdrawCollectedManagementFees, updateWeightsGradually
