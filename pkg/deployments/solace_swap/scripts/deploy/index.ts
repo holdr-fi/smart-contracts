@@ -1,4 +1,5 @@
 export * from './deployToken';
+export * from './deployToken2';
 export * from './deployAuthorizer';
 export * from './deployVault';
 export * from './deployBalancerHelpers';

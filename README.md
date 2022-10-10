@@ -9,12 +9,6 @@
     - After _rootTransferDelay (set in constructor, recommended appears to be 1 month) time period, OLD_ROOT call execute(...)
     - NEW_ROOT call claimRoot()
 
-0x7edc3B932b9f804cAEC28d93Edf482604DF79857
-0x1b3c85eb0000000000000000000000006e3b756688db28aaaa5707562f4eb88e80a92614
-false
-false
-true
-1657622486
 
 # <img src="logo.svg" alt="Balancer" height="128px">
 

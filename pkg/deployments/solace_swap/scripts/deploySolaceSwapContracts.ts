@@ -1,5 +1,6 @@
 import {
   deployToken,
+  deployToken2,
   deployAuthorizer,
   deployVault,
   deployBalancerHelpers,
@@ -23,6 +24,7 @@ import { ContractDeployment, ContractDeploymentCollection } from '../types';
 export const deploySolaceSwapContracts = async function deploySolaceSwapContracts(): Promise<ContractDeploymentCollection> {
   // Token deployment
   const tokenDeployment: ContractDeployment = await deployToken();
+  const tokenDeployment2: ContractDeployment = await deployToken2();
 
   // DEX contracts deployments
   const authorizerDeployment: ContractDeployment = await deployAuthorizer();
@@ -87,6 +89,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
+  contractDeploymentCollection[tokenDeployment2.name] = tokenDeployment2;
   contractDeploymentCollection[authorizerDeployment.name] = authorizerDeployment;
   contractDeploymentCollection[vaultDeployment.name] = vaultDeployment;
   contractDeploymentCollection[balancerHelpersDeployment.name] = balancerHelpersDeployment;

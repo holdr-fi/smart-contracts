@@ -5,9 +5,11 @@ export type ContractDeployment = {
   address: string;
   constructorArgs: any[];
   predeployed: boolean;
-  instance?: Contract;
+  instance: Contract;
 };
 
 export type ContractDeploymentCollection = {
   [name: string]: ContractDeployment;
 };
+
+export * from './pool';

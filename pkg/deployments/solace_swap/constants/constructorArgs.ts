@@ -10,3 +10,4 @@ export const maxYieldValue = fp(0.5);
 export const maxAUMValue = fp(0.5);
 export const BPT_ADDRESS = '0xf8a0623ab66F985EfFc1C69D05F1af4BaDB01b00';
 export const START_TIME = 1657756800;
+export const SWAP_FEE = fp(0.001);
