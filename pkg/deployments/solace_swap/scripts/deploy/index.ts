@@ -14,3 +14,5 @@ export * from './deployTokenMinter';
 export * from './deploySingleRecipientGaugeFactory';
 export * from './deployVotingEscrowDelegation';
 export * from './deployVotingEscrowDelegationProxy';
+export * from './deployFeeDistributor';
+export * from './deployBatchRelayer';

@@ -15,6 +15,8 @@ import {
   deploySingleRecipientGaugeFactory,
   deployVotingEscrowDelegation,
   deployVotingEscrowDelegationProxy,
+  deployFeeDistributor,
+  deployBatchRelayer,
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
@@ -73,6 +75,15 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     votingEscrowDelegationDeployment.address
   );
 
+  const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
+
+  const batchRelayerDeployment: ContractDeployment = await deployBatchRelayer(
+    vaultDeployment.address,
+    tokenMinterDeployment.address
+  );
+
+  // Augmentation contract deployments
+
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
@@ -93,6 +104,8 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[singleRecipientGaugeFactoryDeployment.name] = singleRecipientGaugeFactoryDeployment;
   contractDeploymentCollection[votingEscrowDelegationDeployment.name] = votingEscrowDelegationDeployment;
   contractDeploymentCollection[votingEscrowDelegationProxyDeployment.name] = votingEscrowDelegationProxyDeployment;
+  contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
+  contractDeploymentCollection[batchRelayerDeployment.name] = batchRelayerDeployment;
 
   return contractDeploymentCollection;
 };

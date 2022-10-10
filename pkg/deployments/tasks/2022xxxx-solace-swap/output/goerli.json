@@ -1,6 +1,6 @@
 {
   "TimelockAuthorizer": "0x394384cAe3F7029000cfCf1900F255282f3BFB84",
-  "timestamp": 1665402402542,
+  "timestamp": 1665403889332,
   "Vault": "0x4E4A146551e44F4D6FBaB2476a7BD63acb6b3999",
   "BalancerHelpers": "0x7414364ca217E572Aa42eC5164b0b3a704Fda0e2",
   "BalancerQueries": "0x3EBe0B6FB34d66b5E1B72736a2CEbDAb01886bBa",
@@ -15,5 +15,7 @@
   "GaugeAdder": "0xDB9253E6fa3124c3f4Fbd5F026bEd7956f51b11b",
   "SingleRecipientGaugeFactory": "0x8a0BbdC48959432438a0b7Be494f8EB9f2e4A7c8",
   "VotingEscrowDelegation": "0xDB45428b0fa82A087ACe3e5d249bd6c102c04756",
-  "VotingEscrowDelegationProxy": "0x9158b45f76C39D063aB4800771025D0AB5DFFF37"
+  "VotingEscrowDelegationProxy": "0x9158b45f76C39D063aB4800771025D0AB5DFFF37",
+  "FeeDistributor": "0x70b85C4caBfbc4E51f1e404B27f2ceAa34C761d5",
+  "BatchRelayerLibrary": "0xe38251F7E6bA823537AF08c59a04022544a104a3"
 }
