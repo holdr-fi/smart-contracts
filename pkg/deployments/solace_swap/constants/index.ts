@@ -9,4 +9,5 @@ export const ZERO = BN.from('0');
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 export const ONE_DAY = BN.from('86400');
 export const MAX_UINT256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-export const ADMIN = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
+
+export * from './constructorArgs';

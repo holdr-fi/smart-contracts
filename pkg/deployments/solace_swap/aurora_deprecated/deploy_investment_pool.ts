@@ -81,20 +81,20 @@ async function main() {
   const [deployer] = await ethers.getSigners();
 
   // Deploy contracts
-  await deployAuthorizer();
-  await deployVault();
-  await deployBalancerHelpers();
-  await deployWeightedPoolFactory();
-  await deployWeightedPool2TokensFactory();
-  await deployInvestmentPoolFactory();
-  await deployRelayerLibrary();
-  await deployMultiCall2();
+  await deployAuthorizer(true);
+  // await deployVault();
+  // await deployBalancerHelpers();
+  // await deployWeightedPoolFactory();
+  // await deployWeightedPool2TokensFactory();
+  // await deployInvestmentPoolFactory();
+  // await deployRelayerLibrary();
+  // await deployMultiCall2();
   // await deployInvestmentPool();
 
   // Verify contracts
-  await verifyContracts();
-  await verifyRelayer();
-  await verifyMulticall();
+  await verifyContracts(true);
+  // await verifyRelayer();
+  // await verifyMulticall();
   // await verifyInvestmentPool();
 
   /*******************
@@ -105,12 +105,12 @@ async function main() {
   async function deployAuthorizer(force = false) {
     const CONTRACT_NAME = 'TimelockAuthorizer';
     const CONSTRUCTOR_ARGS = [ADMIN, ZERO_ADDRESS, WEEK];
-
     let instance: Contract;
     const PREDEPLOYED_INSTANCE = await getPredeployedInstance(CONTRACT_NAME, task);
 
     // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
     if (force || !PREDEPLOYED_INSTANCE) {
+      console.log('forced');
       instance = await task.deploy(CONTRACT_NAME, CONSTRUCTOR_ARGS, deployer);
     } else {
       instance = PREDEPLOYED_INSTANCE;

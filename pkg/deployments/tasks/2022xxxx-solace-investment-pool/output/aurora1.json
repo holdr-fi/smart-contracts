@@ -1,0 +1,11 @@
+{
+  "TimelockAuthorizer": "0x86aAC7a3cEa476769cbe6CBb04B2eE7A29560250",
+  "timestamp": 1657823021014,
+  "Vault": "0x1Bee13139Ef9A5E1301f83Ca90d09C5289Ce3FC2",
+  "BalancerHelpers": "0x8598bcc3B5A24f9adE57c00681Fcbb49c8B7dA8b",
+  "WeightedPoolFactory": "0x39526464aC81f75009a8C1e425F2340e7f1dDfD4",
+  "WeightedPool2TokensFactory": "0x3Ef2B76449828dF079e29df5Bb7Eb51A39dAf46C",
+  "InvestmentPoolFactory": "0xAD47548be7e2e085207062aD03f396bf599F7478",
+  "BatchRelayerLibrary": "0x2029dE5eeA0856b6BC3349d2F8d2817e2fcDDc37",
+  "Multicall2": "0x36C232005D7c237c1268AA8C8B51b7Eb59eB44ae"
+}

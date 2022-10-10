@@ -16,7 +16,9 @@ export async function deploy(
 
   const { ethers } = await import('hardhat');
   const factory = await ethers.getContractFactory(artifact.abi, artifact.evm.bytecode.object as utils.BytesLike);
-  const deployment = await factory.connect(from).deploy(...args);
+  const deployment = await factory
+    .connect(from)
+    .deploy(...args, { maxFeePerGas: 10000000000, maxPriorityFeePerGas: 3000000000 });
   return deployment.deployed();
 }
 

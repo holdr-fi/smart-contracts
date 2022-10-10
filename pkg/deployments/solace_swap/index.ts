@@ -1,11 +1,10 @@
-import { ethers } from './input';
-import { deploySolaceSwapContracts } from './scripts';
+import { deploySolaceSwapContracts, verifySolaceSwapContracts } from './scripts';
+import { ContractDeploymentCollection } from './types';
 
 async function main() {
   console.time('script_run_time');
-  const [deployer] = await ethers.getSigners();
-  await deploySolaceSwapContracts(deployer);
-  //   await verifySolaceSwapContracts();
+  const contractDeploymentCollection: ContractDeploymentCollection = await deploySolaceSwapContracts();
+  // await verifySolaceSwapContracts(contractDeploymentCollection, true);
 }
 
 main()

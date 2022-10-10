@@ -1,20 +1,17 @@
 import { WEEK } from '@balancer-labs/v2-helpers/src/time';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { ADMIN, ZERO_ADDRESS } from '../../constants';
 import { Contract } from 'ethers';
 import { getPredeployedInstance } from '../../utils/task';
 import { task } from '../../input';
 import { ContractDeployment } from '../../types';
+import { ethers } from './../../input';
 
-const contractName = 'TimelockAuthorizer';
-const constructorArgs = [ADMIN, ZERO_ADDRESS, WEEK];
-
-export const deployAuthorizer = async function deployAuthorizer(
-  deployer: SignerWithAddress,
-  force = false
-): Promise<ContractDeployment> {
+export const deployAuthorizer = async function deployAuthorizer(force = false): Promise<ContractDeployment> {
+  const contractName = 'TimelockAuthorizer';
+  const constructorArgs = [ADMIN, ZERO_ADDRESS, WEEK];
   let instance: Contract;
   const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
   if (force || !predeployedInstance) {
@@ -26,7 +23,7 @@ export const deployAuthorizer = async function deployAuthorizer(
   const deployment: ContractDeployment = {
     name: contractName,
     address: instance.address,
-    constructor_args: constructorArgs,
+    constructorArgs: constructorArgs,
     // If force == true, predeployed = false, otherwise false if !PREDEPLOYED_INSTANCE
     predeployed: force || !predeployedInstance ? false : true,
     instance: instance,

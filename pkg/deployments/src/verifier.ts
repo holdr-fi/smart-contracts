@@ -102,6 +102,8 @@ export default class Verifier {
     const solcFullVersion = await getLongVersion(contractInformation.solcVersion);
     const etherscanAPIEndpoints = await getEtherscanEndpoints(this.network.provider, this.network.name);
 
+    console.log('deployArgumentsEncoded: ', deployArgumentsEncoded);
+
     const verificationStatus = await this.attemptVerification(
       etherscanAPIEndpoints,
       contractInformation,
@@ -152,6 +154,7 @@ export default class Verifier {
   private async verifyContract(url: string, req: EtherscanVerifyRequest): Promise<EtherscanResponse> {
     const parameters = new URLSearchParams({ ...req });
     const requestDetails = { method: 'post', body: parameters };
+    console.log('requestDetails: ', requestDetails);
 
     let response: Response;
     try {

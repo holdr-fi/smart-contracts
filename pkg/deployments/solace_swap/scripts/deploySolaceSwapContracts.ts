@@ -1,14 +1,98 @@
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
-import { deployAuthorizer } from './deploy';
-import { ContractDeploymentCollection } from '../types';
+import {
+  deployToken,
+  deployAuthorizer,
+  deployVault,
+  deployBalancerHelpers,
+  deployBalancerQueries,
+  deployProtocolFeePercentagesProvider,
+  deployWeightedPoolFactoryV2,
+  deployAuthorizerAdaptor,
+  deployTokenAdmin,
+  deployVotingEscrow,
+  deployGaugeController,
+  deployGaugeAdder,
+  deployTokenMinter,
+  deploySingleRecipientGaugeFactory,
+  deployVotingEscrowDelegation,
+  deployVotingEscrowDelegationProxy,
+} from './deploy';
+import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
-export const deploySolaceSwapContracts = async function deploySolaceSwapContracts(
-  deployer: SignerWithAddress
-): Promise<ContractDeploymentCollection> {
+export const deploySolaceSwapContracts = async function deploySolaceSwapContracts(): Promise<ContractDeploymentCollection> {
+  // Token deployment
+  const tokenDeployment: ContractDeployment = await deployToken();
+
+  // DEX contracts deployments
+  const authorizerDeployment: ContractDeployment = await deployAuthorizer();
+  // Also deployed ProtocolFeesCollector which we can verify.
+  const vaultDeployment: ContractDeployment = await deployVault(authorizerDeployment.address);
+  const balancerHelpersDeployment: ContractDeployment = await deployBalancerHelpers(vaultDeployment.address);
+  const balancerQueriesDeployment: ContractDeployment = await deployBalancerQueries(vaultDeployment.address);
+  const protocolFeePercentagesProviderDeployment: ContractDeployment = await deployProtocolFeePercentagesProvider(
+    vaultDeployment.address
+  );
+
+  const weightedPoolFactoryDeployment: ContractDeployment = await deployWeightedPoolFactoryV2(
+    vaultDeployment.address,
+    protocolFeePercentagesProviderDeployment.address
+  );
+
+  // veToken system deployments
+  const authorizerAdaptorDeployment: ContractDeployment = await deployAuthorizerAdaptor(vaultDeployment.address);
+
+  const tokenAdminDeployment: ContractDeployment = await deployTokenAdmin(
+    vaultDeployment.address,
+    tokenDeployment.address
+  );
+  const votingEscrowDeployment: ContractDeployment = await deployVotingEscrow(authorizerAdaptorDeployment.address);
+
+  const gaugeControllerDeployment: ContractDeployment = await deployGaugeController(
+    votingEscrowDeployment.address,
+    authorizerAdaptorDeployment.address
+  );
+
+  const gaugeAdderDeployment: ContractDeployment = await deployGaugeAdder(gaugeControllerDeployment.address);
+
+  const tokenMinterDeployment: ContractDeployment = await deployTokenMinter(
+    tokenAdminDeployment.address,
+    gaugeControllerDeployment.address
+  );
+
+  const singleRecipientGaugeFactoryDeployment: ContractDeployment = await deploySingleRecipientGaugeFactory(
+    tokenMinterDeployment.address
+  );
+
+  const votingEscrowDelegationDeployment: ContractDeployment = await deployVotingEscrowDelegation(
+    votingEscrowDeployment.address,
+    authorizerAdaptorDeployment.address
+  );
+
+  const votingEscrowDelegationProxyDeployment: ContractDeployment = await deployVotingEscrowDelegationProxy(
+    vaultDeployment.address,
+    votingEscrowDeployment.address,
+    votingEscrowDelegationDeployment.address
+  );
+
+  // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
-
-  const authorizerDeployment = await deployAuthorizer(deployer);
+  contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
   contractDeploymentCollection[authorizerDeployment.name] = authorizerDeployment;
+  contractDeploymentCollection[vaultDeployment.name] = vaultDeployment;
+  contractDeploymentCollection[balancerHelpersDeployment.name] = balancerHelpersDeployment;
+  contractDeploymentCollection[balancerQueriesDeployment.name] = balancerQueriesDeployment;
+  contractDeploymentCollection[
+    protocolFeePercentagesProviderDeployment.name
+  ] = protocolFeePercentagesProviderDeployment;
+  contractDeploymentCollection[weightedPoolFactoryDeployment.name] = weightedPoolFactoryDeployment;
+  contractDeploymentCollection[authorizerAdaptorDeployment.name] = authorizerAdaptorDeployment;
+  contractDeploymentCollection[tokenAdminDeployment.name] = tokenAdminDeployment;
+  contractDeploymentCollection[votingEscrowDeployment.name] = votingEscrowDeployment;
+  contractDeploymentCollection[gaugeControllerDeployment.name] = gaugeControllerDeployment;
+  contractDeploymentCollection[gaugeAdderDeployment.name] = gaugeAdderDeployment;
+  contractDeploymentCollection[tokenMinterDeployment.name] = tokenMinterDeployment;
+  contractDeploymentCollection[singleRecipientGaugeFactoryDeployment.name] = singleRecipientGaugeFactoryDeployment;
+  contractDeploymentCollection[votingEscrowDelegationDeployment.name] = votingEscrowDelegationDeployment;
+  contractDeploymentCollection[votingEscrowDelegationProxyDeployment.name] = votingEscrowDelegationProxyDeployment;
 
   return contractDeploymentCollection;
 };
