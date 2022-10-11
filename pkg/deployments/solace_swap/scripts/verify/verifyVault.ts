@@ -7,5 +7,9 @@ export const verifyVault = async function verifyVault(
 ): Promise<void> {
   if (force || !contractDeployment.predeployed) {
     await task.verify('Vault', contractDeployment.address, contractDeployment.constructorArgs);
+    const feeCollector = await contractDeployment.instance.getProtocolFeesCollector();
+    const feeCollectorArgs = [contractDeployment.address]; // See ProtocolFeesCollector constructor
+    await task.verify('ProtocolFeesCollector', feeCollector, feeCollectorArgs);
+    await task.save({ ProtocolFeesCollector: feeCollector });
   }
 };

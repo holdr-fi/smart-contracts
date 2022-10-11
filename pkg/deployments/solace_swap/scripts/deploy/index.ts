@@ -17,3 +17,6 @@ export * from './deployVotingEscrowDelegation';
 export * from './deployVotingEscrowDelegationProxy';
 export * from './deployFeeDistributor';
 export * from './deployBatchRelayer';
+export * from './deployMainnetGauge';
+export * from './deployMainnetGaugeFactory';
+export * from './deployTokenholderFactory';
