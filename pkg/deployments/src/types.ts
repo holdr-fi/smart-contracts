@@ -15,6 +15,7 @@ export const NETWORKS = [
   'optimism',
   'aurora_testnet',
   'aurora',
+  'mumbai',
 ];
 
 export type Network = typeof NETWORKS[number];

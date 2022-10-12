@@ -16,3 +16,5 @@ export * from './verifyVotingEscrowDelegation';
 export * from './verifyVotingEscrowDelegationProxy';
 export * from './verifyFeeDistributor';
 export * from './verifyBatchRelayer';
+export * from './verifyLiquidityGaugeFactory';
+export * from './verifyTokenholderFactory';

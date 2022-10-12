@@ -9,6 +9,7 @@ import {
   deployWeightedPoolFactoryV2,
   deployAuthorizerAdaptor,
   deployTokenAdmin,
+  deploySPT,
   deployVotingEscrow,
   deployGaugeController,
   deployGaugeAdder,
@@ -17,6 +18,7 @@ import {
   deployVotingEscrowDelegation,
   deployVotingEscrowDelegationProxy,
   deployFeeDistributor,
+  deployWstETH,
   deployBatchRelayer,
   deployMainnetGauge,
   deployMainnetGaugeFactory,
@@ -51,6 +53,15 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     vaultDeployment.address,
     tokenDeployment.address
   );
+
+  await deploySPT(
+    tokenDeployment.instance,
+    tokenDeployment2.instance,
+    weightedPoolFactoryDeployment.instance,
+    vaultDeployment.instance
+  );
+
+  // Require SPT token setup
   const votingEscrowDeployment: ContractDeployment = await deployVotingEscrow(authorizerAdaptorDeployment.address);
 
   const gaugeControllerDeployment: ContractDeployment = await deployGaugeController(
@@ -81,6 +92,8 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   );
 
   const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
+
+  const WstETHDeployment: ContractDeployment = await deployWstETH();
 
   const batchRelayerDeployment: ContractDeployment = await deployBatchRelayer(
     vaultDeployment.address,
@@ -124,6 +137,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[votingEscrowDelegationDeployment.name] = votingEscrowDelegationDeployment;
   contractDeploymentCollection[votingEscrowDelegationProxyDeployment.name] = votingEscrowDelegationProxyDeployment;
   contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
+  contractDeploymentCollection[WstETHDeployment.name] = WstETHDeployment;
   contractDeploymentCollection[batchRelayerDeployment.name] = batchRelayerDeployment;
   contractDeploymentCollection[mainnetGaugeDeployment.name] = mainnetGaugeDeployment;
   contractDeploymentCollection[mainnetGaugeFactoryDeployment.name] = mainnetGaugeFactoryDeployment;

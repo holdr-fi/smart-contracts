@@ -1,8 +1,8 @@
 import { Contract, utils } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
-
 import { getSigner } from './signers';
 import { Artifact, Libraries, Param } from './types';
+import { MAX_FEE, MAX_PRIORITY_FEE } from '../solace_swap/constants/gasValues';
 
 export async function deploy(
   artifact: Artifact,
@@ -18,7 +18,8 @@ export async function deploy(
   const factory = await ethers.getContractFactory(artifact.abi, artifact.evm.bytecode.object as utils.BytesLike);
   const deployment = await factory
     .connect(from)
-    .deploy(...args, { maxFeePerGas: 10000000000, maxPriorityFeePerGas: 3000000000 });
+    .deploy(...args, { maxFeePerGas: MAX_FEE, maxPriorityFeePerGas: MAX_PRIORITY_FEE });
+  // .deploy(...args, { maxFeePerGas: 10000000000, maxPriorityFeePerGas: 3000000000 });
   return deployment.deployed();
 }
 

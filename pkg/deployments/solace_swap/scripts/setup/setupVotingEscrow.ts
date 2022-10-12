@@ -1,16 +1,17 @@
 // https://etherscan.deth.net/address/0xeb151668006CD04DAdD098AFd0a82e78F77076c3#code
 import { ethers, logger, task } from './../../input';
 import { ZERO_ADDRESS, ZERO, ONE_HUNDRED_PERCENT } from './../../constants';
-import { VotingEscrowDeploymentHelper, require } from './../../utils';
-import { BigNumber as BN, Contract, constants } from 'ethers';
+import { VotingEscrowDeploymentHelper, solidityRequire, consoleLog } from './../../utils';
+import { constants } from 'ethers';
 const { HashZero } = constants;
 import { ContractDeploymentCollection } from './../../types';
+import LiquidityGaugeV5ABI from '../../../tasks/2022xxxx-solace-swap/abi/LiquidityGaugeV5.json';
 
-export const setupVotingEscrow = async function setupSPT(
+export const setupVotingEscrow = async function setupVotingEscrow(
   contractDeploymentCollection: ContractDeploymentCollection
 ): Promise<void> {
   const [deployer] = await ethers.getSigners();
-  const authorizer = contractDeploymentCollection['TimelockAuthorizer'].instance;
+  const authorizer = contractDeploymentCollection['Authorizer'].instance;
   const authorizerAdaptor = contractDeploymentCollection['AuthorizerAdaptor'].instance;
   const token = contractDeploymentCollection['TestBalancerToken'].instance;
   const tokenAdmin = contractDeploymentCollection['BalancerTokenAdmin'].instance;
@@ -44,20 +45,20 @@ export const setupVotingEscrow = async function setupSPT(
    * CHECKS
    */
 
-  require(await authorizer.canPerform(HashZero, deployer.address, ZERO_ADDRESS), 'Not Authorizer admin');
+  solidityRequire(await authorizer.canPerform(HashZero, deployer.address, ZERO_ADDRESS), 'Not Authorizer admin');
 
   // Ensure that governance holds relevant admin rights
 
   // prettier-ignore
-  require((await gaugeController.voting_escrow()) == votingEscrow.address, 
+  solidityRequire((await gaugeController.voting_escrow()) == votingEscrow.address, 
   'gaugeController.voting_escrow != votingEscrow instance address');
 
   // prettier-ignore
-  require((await votingEscrow.admin()) === authorizerAdaptor.address, 
+  solidityRequire((await votingEscrow.admin()) === authorizerAdaptor.address, 
   'VotingEscrow not owned by AuthorizerAdaptor');
 
   // prettier-ignore
-  require((await gaugeController.admin()) === authorizerAdaptor.address, 
+  solidityRequire((await gaugeController.admin()) === authorizerAdaptor.address, 
   'GaugeController not owned by AuthorizerAdaptor');
 
   /**
@@ -71,7 +72,7 @@ export const setupVotingEscrow = async function setupSPT(
     await token.connect(deployer).grantRole(tokenDefaultAdminRole, tokenAdmin.address);
 
     logger.info('Granting deployer permission to call activate() on TokenAdmin contract');
-    await helper.grantRole(deployer.address, tokenAdmin, tokenAdmin, 'activate');
+    await helper.grantRole(deployer.address, tokenAdmin, tokenAdmin.interface, 'activate');
 
     logger.info(
       'Assigning TokenAdmin contract the sole MINTER and SNAPSHOTTER role for token. Removing all admin roles from token. Initial inflation set at 145K tokens per week.'
@@ -84,7 +85,7 @@ export const setupVotingEscrow = async function setupSPT(
     // uint256 public constant override RATE_DENOMINATOR = 1e18;
 
     logger.info('Granting TokenMinter permission to call TokenAdmin.mint()');
-    await helper.grantRole(tokenMinter.address, tokenAdmin, tokenAdmin, 'mint');
+    await helper.grantRole(tokenMinter.address, tokenAdmin, tokenAdmin.interface, 'mint');
   }
 
   /**
@@ -93,10 +94,10 @@ export const setupVotingEscrow = async function setupSPT(
 
   if ((await gaugeController.n_gauge_types()).eq(ZERO)) {
     logger.info('Creating gauge types');
-    await helper.grantRole(deployer.address, authorizerAdaptor, gaugeController, 'add_type');
+    await helper.grantRole(deployer.address, authorizerAdaptor, gaugeController.interface, 'add_type(string,uint256)');
     // Create single gauge type with 100% weight.
-    await helper.performAction(gaugeController, 'add_type', [gaugeTypes[0], ONE_HUNDRED_PERCENT]);
-    await helper.revokeRole(deployer.address, authorizerAdaptor, gaugeController, 'add_type');
+    await helper.performAction(gaugeController, 'add_type(string,uint256)', [gaugeTypes[0], ONE_HUNDRED_PERCENT]);
+    await helper.revokeRole(deployer.address, authorizerAdaptor, gaugeController.interface, 'add_type(string,uint256)');
   }
 
   /**
@@ -104,8 +105,28 @@ export const setupVotingEscrow = async function setupSPT(
    */
 
   // GaugeAdder performs checks to ensure added gauges have been deployed by a correct factory contract.
-  logger.info('Enabling GaugeAdder to call GaugeController.add_gauge');
-  await helper.grantRole(gaugeAdder.address, authorizerAdaptor, gaugeController, 'add_gauge');
+  if (
+    !(await helper.hasRole(
+      gaugeAdder.address,
+      authorizerAdaptor,
+      gaugeController.interface,
+      'add_gauge(address,int128,uint256)'
+    ))
+  ) {
+    logger.info('Enabling GaugeAdder to call GaugeController.add_gauge');
+    await helper.grantRole(
+      gaugeAdder.address,
+      authorizerAdaptor,
+      gaugeController.interface,
+      'add_gauge(address,int128)'
+    );
+    await helper.grantRole(
+      gaugeAdder.address,
+      authorizerAdaptor,
+      gaugeController.interface,
+      'add_gauge(address,int128,uint256)'
+    );
+  }
 
   /**
    * 4. Create and setup single recipient gauge
@@ -113,33 +134,43 @@ export const setupVotingEscrow = async function setupSPT(
 
   // Intended to be temporary, and migrated to gauge implementation that automate distribution of BAL to BPT stakers on other networks and veBAL holders.
 
-  if (output['singleRecipientGauge']) {
+  if (output['SingleRecipientGauge'] === undefined) {
     logger.info('Creating single recipient gauge');
-    await helper.grantRole(deployer.address, authorizerAdaptor, gaugeController, 'add_gauge');
-    const gauge: Contract = await helper.createSingleRecipientGauge(gaugeTypes[0], 'OG Gauge', deployer.address);
-    await helper.revokeRole(deployer.address, authorizerAdaptor, gaugeController, 'add_gauge');
-
-    logger.info('Granting permission for deployer to add_reward and set_reward_distributor for single recipient gauge');
-    await helper.grantRole(deployer.address, authorizerAdaptor, gauge, 'add_reward');
-    await helper.grantRole(deployer.address, authorizerAdaptor, gauge, 'set_reward_distributor');
+    await helper.grantRole(deployer.address, authorizerAdaptor, gaugeController.interface, 'add_gauge(address,int128)');
+    await helper.createSingleRecipientGauge(Object.keys(gaugeTypes)[0], 'OG Gauge', deployer.address);
+    await helper.revokeRole(
+      deployer.address,
+      authorizerAdaptor,
+      gaugeController.interface,
+      'add_gauge(address,int128)'
+    );
   }
 
   /**
    * 5. Create and setup liquidity gauge
    */
 
-  if (output['mainnetGauge']) {
-    logger.info('Adding liquidityGaugeFactory as permitted factory to GaugeAdder');
-    await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder, 'addGaugeFactory');
-    await gaugeAdder.connect(deployer).addGaugeFactory(mainnetGaugeFactory, gaugeTypes[0]);
-    await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder, 'addGaugeFactory');
+  consoleLog('output[MainnetGauge]', output['MainnetGauge']);
+  if (output['MainnetGauge'] === undefined) {
+    const liquidityGaugeInterface = new ethers.utils.Interface(LiquidityGaugeV5ABI);
+
+    logger.info('Granting permission for deployer to add_reward and set_reward_distributor for liquidity gauge');
+    await helper.grantRole(deployer.address, authorizerAdaptor, liquidityGaugeInterface, 'add_reward');
+    await helper.grantRole(deployer.address, authorizerAdaptor, liquidityGaugeInterface, 'set_reward_distributor');
+
+    if ((await gaugeAdder.getFactoryForGaugeType(Object.keys(gaugeTypes)[0], 0)) !== mainnetGaugeFactory.address) {
+      logger.info('Adding liquidityGaugeFactory as permitted factory to GaugeAdder');
+      await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addGaugeFactory');
+      await gaugeAdder.connect(deployer).addGaugeFactory(mainnetGaugeFactory.address, Object.keys(gaugeTypes)[0]);
+      await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addGaugeFactory');
+    }
 
     logger.info('Creating new liquidity gauge and adding to GaugeController');
-    await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder, 'addEthereumGauge');
+    await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
     for (let i = 0; i < initialPools.length; i++) {
       await helper.createMainnetGauge(initialPools[i]);
     }
-    await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder, 'addEthereumGauge');
+    await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
   }
 
   /**

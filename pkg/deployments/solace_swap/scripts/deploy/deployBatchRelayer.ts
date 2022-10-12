@@ -10,8 +10,13 @@ export const deployBatchRelayer = async function deployBatchRelayer(
   tokenMinterDeploymentAddress: string,
   force = false
 ): Promise<ContractDeployment> {
+  const output = task.output({ ensure: false });
   const contractName = 'BatchRelayerLibrary';
-  const constructorArgs = [vaultDeploymentAddress, WSTETH_ADDRESS, tokenMinterDeploymentAddress];
+  const constructorArgs = [
+    vaultDeploymentAddress,
+    WSTETH_ADDRESS === '' ? output['WstETH'] : WSTETH_ADDRESS,
+    tokenMinterDeploymentAddress,
+  ];
   let instance: Contract;
   const predeployedInstance = await getPredeployedInstance(contractName, task);
   const [deployer] = await ethers.getSigners();

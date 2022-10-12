@@ -6,6 +6,6 @@ export const verifyAuthorizer = async function verifyAuthorizer(
   force = false
 ): Promise<void> {
   if (force || !contractDeployment.predeployed) {
-    await task.verify('TimelockAuthorizer', contractDeployment.address, contractDeployment.constructorArgs);
+    await task.verify('Authorizer', contractDeployment.address, contractDeployment.constructorArgs);
   }
 };

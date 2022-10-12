@@ -3,14 +3,14 @@ import { getPredeployedInstance } from '../../utils/task';
 import { task } from '../../input';
 import { ContractDeployment } from '../../types';
 import { ethers } from '../../input';
-import { BPT_ADDRESS } from '../../constants';
 
 export const deployVotingEscrow = async function deployVotingEscrow(
   authorizerAdaptorAddress: string,
   force = false
 ): Promise<ContractDeployment> {
+  const output = task.output({ ensure: false });
   const contractName = 'VotingEscrow';
-  const constructorArgs = [BPT_ADDRESS, 'Vote Escrowed SPT', 'veSWP', authorizerAdaptorAddress];
+  const constructorArgs = [output['SPT'], 'Vote Escrowed SPT', 'veSWP', authorizerAdaptorAddress];
   let instance: Contract;
   const predeployedInstance = await getPredeployedInstance(contractName, task);
   const [deployer] = await ethers.getSigners();

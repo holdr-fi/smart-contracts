@@ -1,5 +1,5 @@
 import { ContractDeployment } from '../../types';
-import { task } from '../../input';
+import { task, createNewTask } from '../../input';
 
 export const verifyBatchRelayer = async function verifyBatchRelayer(
   contractDeployment: ContractDeployment,
@@ -7,10 +7,11 @@ export const verifyBatchRelayer = async function verifyBatchRelayer(
   force = false
 ): Promise<void> {
   if (force || !contractDeployment.predeployed) {
-    await task.verify('BatchRelayerLibrary', contractDeployment.address, contractDeployment.constructorArgs);
+    const previousTask = createNewTask('20220916-batch-relayer-v4');
+    await previousTask.verify('BatchRelayerLibrary', contractDeployment.address, contractDeployment.constructorArgs);
     const relayer: string = await contractDeployment.instance.getEntrypoint();
     const relayerArgs = [vaultAddress, contractDeployment.address]; // See BalancerRelayer's constructor
-    await task.verify('BalancerRelayer', relayer, relayerArgs);
+    await previousTask.verify('BalancerRelayer', relayer, relayerArgs);
     await task.save({ BalancerRelayer: relayer });
   }
 };

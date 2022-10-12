@@ -1,5 +1,5 @@
 import { ContractDeployment } from '../../types';
-import { task } from '../../input';
+import { task, createNewTask } from '../../input';
 
 export const verifyVault = async function verifyVault(
   contractDeployment: ContractDeployment,
@@ -9,7 +9,8 @@ export const verifyVault = async function verifyVault(
     await task.verify('Vault', contractDeployment.address, contractDeployment.constructorArgs);
     const feeCollector = await contractDeployment.instance.getProtocolFeesCollector();
     const feeCollectorArgs = [contractDeployment.address]; // See ProtocolFeesCollector constructor
-    await task.verify('ProtocolFeesCollector', feeCollector, feeCollectorArgs);
+    const previousTask = createNewTask('20210418-vault');
+    await previousTask.verify('ProtocolFeesCollector', feeCollector, feeCollectorArgs);
     await task.save({ ProtocolFeesCollector: feeCollector });
   }
 };

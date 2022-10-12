@@ -18,13 +18,15 @@ import {
   verifyVotingEscrowDelegationProxy,
   verifyFeeDistributor,
   verifyBatchRelayer,
+  verifyLiquidityGaugeFactory,
+  verifyTokenholderFactory,
 } from './verify';
 
 export const verifySolaceSwapContracts = async function verifySolaceSwapContracts(
   contractDeploymentCollection: ContractDeploymentCollection,
   force = false
 ): Promise<void> {
-  await verifyAuthorizer(contractDeploymentCollection['TimelockAuthorizer'], force);
+  await verifyAuthorizer(contractDeploymentCollection['Authorizer'], force);
   await verifyVault(contractDeploymentCollection['Vault'], force);
   await verifyToken(contractDeploymentCollection['TestBalancerToken'], force);
   await verifyBalancerHelpers(contractDeploymentCollection['BalancerHelpers'], force);
@@ -50,4 +52,6 @@ export const verifySolaceSwapContracts = async function verifySolaceSwapContract
     contractDeploymentCollection['Vault'].address,
     force
   );
+  await verifyLiquidityGaugeFactory(contractDeploymentCollection['LiquidityGaugeFactory'], force);
+  await verifyTokenholderFactory(contractDeploymentCollection['BALTokenHolderFactory'], force);
 };

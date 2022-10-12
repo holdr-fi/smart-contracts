@@ -3,7 +3,7 @@ import { config as dotenv_config } from 'dotenv';
 dotenv_config();
 
 export const config: HardhatUserConfig = {
-  defaultNetwork: 'goerli',
+  defaultNetwork: 'mumbai',
   networks: {
     aurora: {
       url: process.env.AURORA_URL,
@@ -22,6 +22,13 @@ export const config: HardhatUserConfig = {
     goerli: {
       url: process.env.GOERLI_URL,
       chainId: 5,
+      accounts: JSON.parse(process.env.PRIVATE_KEYS || '[]'),
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+    },
+    mumbai: {
+      url: process.env.MUMBAI_URL,
+      chainId: 80001,
       accounts: JSON.parse(process.env.PRIVATE_KEYS || '[]'),
       gas: 12000000,
       blockGasLimit: 0x1fffffffffffff,
