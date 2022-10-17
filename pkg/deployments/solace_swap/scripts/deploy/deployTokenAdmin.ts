@@ -1,8 +1,6 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from '../../input';
 
 export const deployTokenAdmin = async function deployTokenAdmin(
   vaultDeploymentAddress: string,
@@ -12,7 +10,7 @@ export const deployTokenAdmin = async function deployTokenAdmin(
   const contractName = 'BalancerTokenAdmin';
   const constructorArgs = [vaultDeploymentAddress, tokenDeploymentAddress];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined

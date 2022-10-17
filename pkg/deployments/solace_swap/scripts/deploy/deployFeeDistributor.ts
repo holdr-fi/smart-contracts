@@ -1,8 +1,7 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from '../../input';
+import { getCurrentTimestamp } from '../../utils';
 
 export const deployFeeDistributor = async function deployFeeDistributor(
   votingEscrowDeploymentAddress: string,
@@ -10,11 +9,11 @@ export const deployFeeDistributor = async function deployFeeDistributor(
 ): Promise<ContractDeployment> {
   const [deployer] = await ethers.getSigners();
   const contractName = 'FeeDistributor';
-  const startTime = (await deployer.provider.getBlock('latest')).timestamp;
+  const currentTime = await getCurrentTimestamp(deployer.provider);
   // Need to provide startTime >= current timestamp, and there is an extra check if startTime is in within the current week.
-  const constructorArgs = [votingEscrowDeploymentAddress, startTime + 1000000];
+  const constructorArgs = [votingEscrowDeploymentAddress, currentTime + 1000000];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
   if (force || !predeployedInstance) {

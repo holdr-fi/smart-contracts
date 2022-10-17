@@ -1,9 +1,7 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 import { maxYieldValue, maxAUMValue } from '../../constants';
-import { ethers } from './../../input';
 
 export const deployProtocolFeePercentagesProvider = async function deployProtocolFeePercentagesProvider(
   vaultDeploymentAddress: string,
@@ -12,7 +10,7 @@ export const deployProtocolFeePercentagesProvider = async function deployProtoco
   const contractName = 'ProtocolFeePercentagesProvider';
   const constructorArgs = [vaultDeploymentAddress, maxYieldValue, maxAUMValue];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined

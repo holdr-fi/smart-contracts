@@ -1,15 +1,13 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from './../../input';
 
 export const deployAuthorizer = async function deployAuthorizer(force = false): Promise<ContractDeployment> {
   const [deployer] = await ethers.getSigners();
   const contractName = 'Authorizer';
   const constructorArgs = [deployer.address];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
   if (force || !predeployedInstance) {

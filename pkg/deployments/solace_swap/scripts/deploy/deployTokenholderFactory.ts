@@ -1,8 +1,6 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from '../../input';
 
 export const deployTokenholderFactory = async function deployTokenholderFactory(
   tokenDeploymentAddress: string,
@@ -12,7 +10,7 @@ export const deployTokenholderFactory = async function deployTokenholderFactory(
   const contractName = 'BALTokenHolderFactory';
   const constructorArgs = [tokenDeploymentAddress, vaultDeploymentAddress];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined

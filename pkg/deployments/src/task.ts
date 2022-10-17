@@ -320,7 +320,7 @@ export default class Task {
     }, {});
   }
 
-  private _parseRawOutput(rawOutput: RawOutput): Output {
+  _parseRawOutput(rawOutput: RawOutput): Output {
     return Object.keys(rawOutput).reduce((output: Output, key: string) => {
       const value = rawOutput[key];
       output[key] = typeof value === 'string' ? value : value.address;
@@ -328,42 +328,42 @@ export default class Task {
     }, {});
   }
 
-  private _read(path: string): Output {
+  _read(path: string): Output {
     return fs.existsSync(path) ? JSON.parse(fs.readFileSync(path).toString()) : {};
   }
 
-  private _write(path: string, output: Output): void {
+  _write(path: string, output: Output): void {
     const timestamp = new Date().getTime();
     const finalOutputJSON = JSON.stringify({ ...output, timestamp }, null, 2);
     fs.writeFileSync(path, finalOutputJSON);
   }
 
-  private _fileAt(base: string, name: string, ensure = true): string {
+  _fileAt(base: string, name: string, ensure = true): string {
     const filePath = path.join(base, name);
     if (ensure && !this._existsFile(filePath)) throw Error(`Could not find a file at ${filePath}`);
     return filePath;
   }
 
-  private _dirAt(base: string, name: string, ensure = true): string {
+  _dirAt(base: string, name: string, ensure = true): string {
     const dirPath = path.join(base, name);
     if (ensure && !this._existsDir(dirPath)) throw Error(`Could not find a directory at ${dirPath}`);
     return dirPath;
   }
 
-  private _existsFile(filePath: string): boolean {
+  _existsFile(filePath: string): boolean {
     return fs.existsSync(filePath) && fs.statSync(filePath).isFile();
   }
 
-  private _existsDir(dirPath: string): boolean {
+  _existsDir(dirPath: string): boolean {
     return fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _isTask(object: any): boolean {
+  _isTask(object: any): boolean {
     return object.constructor.name == 'Task';
   }
 
-  private _findTaskId(idAlias: string): string {
+  _findTaskId(idAlias: string): string {
     const matches = Task.getAllTaskIds().filter((taskDirName) => taskDirName.includes(idAlias));
 
     if (matches.length == 1) {

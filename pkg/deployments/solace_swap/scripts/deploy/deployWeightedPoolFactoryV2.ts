@@ -1,8 +1,6 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from './../../input';
 
 export const deployWeightedPoolFactoryV2 = async function deployWeightedPoolFactoryV2(
   vaultDeploymentAddress: string,
@@ -12,7 +10,7 @@ export const deployWeightedPoolFactoryV2 = async function deployWeightedPoolFact
   const contractName = 'WeightedPoolFactory';
   const constructorArgs = [vaultDeploymentAddress, protocolFeePercentagesProviderDeploymentAddress];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined

@@ -1,8 +1,6 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from '../../input';
 import { WETH_ADDRESS } from '../../constants';
 
 export const deployWstETH = async function deployWstETH(force = false): Promise<ContractDeployment> {
@@ -10,7 +8,7 @@ export const deployWstETH = async function deployWstETH(force = false): Promise<
   const contractName = 'WstETH';
   const constructorArgs = [WETH_ADDRESS];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
   if (force || !predeployedInstance) {

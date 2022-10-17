@@ -18,3 +18,6 @@ export * from './verifyFeeDistributor';
 export * from './verifyBatchRelayer';
 export * from './verifyLiquidityGaugeFactory';
 export * from './verifyTokenholderFactory';
+export * from './verifyBribeVault';
+export * from './verifyRewardDistributor';
+export * from './verifyBalancerBribe';

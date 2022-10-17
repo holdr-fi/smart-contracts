@@ -150,7 +150,6 @@ export const setupVotingEscrow = async function setupVotingEscrow(
    * 5. Create and setup liquidity gauge
    */
 
-  consoleLog('output[MainnetGauge]', output['MainnetGauge']);
   if (output['MainnetGauge'] === undefined) {
     const liquidityGaugeInterface = new ethers.utils.Interface(LiquidityGaugeV5ABI);
 

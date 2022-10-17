@@ -36,6 +36,7 @@
     "@balancer-labs/v2-helpers": "workspace:*",
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-etherscan": "latest",
+    "@nomiclabs/hardhat-vyper": "latest",
     "@solidity-parser/parser": "^0.14.0",
     "@types/lodash": "^4.14.181",
     "@types/lodash.range": "^3",

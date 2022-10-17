@@ -1,8 +1,6 @@
 import { Contract } from 'ethers';
-import { getPredeployedInstance } from '../../utils/task';
-import { task } from '../../input';
+import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers } from './../../input';
 
 export const deployAuthorizerAdaptor = async function deployAuthorizerAdaptor(
   vaultDeploymentAddress: string,
@@ -11,7 +9,7 @@ export const deployAuthorizerAdaptor = async function deployAuthorizerAdaptor(
   const contractName = 'AuthorizerAdaptor';
   const constructorArgs = [vaultDeploymentAddress];
   let instance: Contract;
-  const predeployedInstance = await getPredeployedInstance(contractName, task);
+  const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined

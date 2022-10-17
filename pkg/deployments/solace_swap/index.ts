@@ -1,11 +1,17 @@
-import { deploySolaceSwapContracts, verifySolaceSwapContracts, setupVotingEscrowSystem } from './scripts';
+import {
+  deploySolaceSwapContracts,
+  verifySolaceSwapContracts,
+  setupVotingEscrowSystem,
+  setupBribingSystem,
+} from './scripts';
 import { ContractDeploymentCollection } from './types';
 
 async function main() {
   console.time('script_run_time');
   const contractDeploymentCollection: ContractDeploymentCollection = await deploySolaceSwapContracts();
-  // await verifySolaceSwapContracts(contractDeploymentCollection, false);
-  await setupVotingEscrowSystem(contractDeploymentCollection);
+  // await verifySolaceSwapContracts(contractDeploymentCollection, true);
+  // await setupVotingEscrowSystem(contractDeploymentCollection);
+  await setupBribingSystem(contractDeploymentCollection);
 }
 
 main()

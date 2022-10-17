@@ -5,11 +5,11 @@ import { AssetHelpers } from '../../utils';
 import { BigNumber as BN, Contract } from 'ethers';
 import { ZERO, ONE_ETHER, WETH_ADDRESS } from '../../constants';
 import { ContractDeploymentCollection } from '../../types';
-import { ethers, logger, task } from './../../input';
+import { ethers, logger, task } from '../../input';
 const { defaultAbiCoder } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 
-export const getVeSPT = async function getVeSPT(
+export const voteForGauge = async function voteForGauge(
   contractDeploymentCollection: ContractDeploymentCollection
 ): Promise<void> {
   const [deployer] = await ethers.getSigners();

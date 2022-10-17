@@ -1,9 +1,8 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { ADMIN } from '../../constants';
 import { Contract } from 'ethers';
-import { task } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ethers, logger } from '../../input';
+import { task, ethers, logger } from '../../input';
 import { deploy } from '../../../src/contracts';
 import { Param } from '../../../src/types';
 import { saveContractDeploymentTransactionHash } from '../../../src/network';

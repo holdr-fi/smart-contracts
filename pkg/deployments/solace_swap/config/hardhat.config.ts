@@ -1,5 +1,6 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import { config as dotenv_config } from 'dotenv';
+import '@nomiclabs/hardhat-vyper';
 dotenv_config();
 
 export const config: HardhatUserConfig = {
@@ -36,6 +37,12 @@ export const config: HardhatUserConfig = {
   },
   mocha: {
     timeout: 600000,
+  },
+  paths: {
+    sources: './solace_swap/contracts',
+    tests: './test',
+    cache: './cache',
+    artifacts: './artifacts',
   },
   solidity: {
     compilers: [

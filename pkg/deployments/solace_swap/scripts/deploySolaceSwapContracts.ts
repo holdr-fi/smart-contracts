@@ -9,7 +9,7 @@ import {
   deployWeightedPoolFactoryV2,
   deployAuthorizerAdaptor,
   deployTokenAdmin,
-  deploySPT,
+  deployWeightedPool,
   deployVotingEscrow,
   deployGaugeController,
   deployGaugeAdder,
@@ -23,6 +23,9 @@ import {
   deployMainnetGauge,
   deployMainnetGaugeFactory,
   deployTokenholderFactory,
+  deployBribeVault,
+  deployRewardDistributor,
+  deployBalancerBribe,
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
@@ -54,7 +57,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     tokenDeployment.address
   );
 
-  await deploySPT(
+  const weightedPoolDeployment: ContractDeployment = await deployWeightedPool(
     tokenDeployment.instance,
     tokenDeployment2.instance,
     weightedPoolFactoryDeployment.instance,
@@ -115,6 +118,12 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     vaultDeployment.address
   );
 
+  // Deploy Hidden Hand Bribe contracts
+
+  const bribeVaultDeployment: ContractDeployment = await deployBribeVault();
+  const rewardDistributorDeployment: ContractDeployment = await deployRewardDistributor(bribeVaultDeployment.address);
+  const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
+
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
@@ -129,6 +138,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[weightedPoolFactoryDeployment.name] = weightedPoolFactoryDeployment;
   contractDeploymentCollection[authorizerAdaptorDeployment.name] = authorizerAdaptorDeployment;
   contractDeploymentCollection[tokenAdminDeployment.name] = tokenAdminDeployment;
+  contractDeploymentCollection[weightedPoolDeployment.name] = weightedPoolDeployment;
   contractDeploymentCollection[votingEscrowDeployment.name] = votingEscrowDeployment;
   contractDeploymentCollection[gaugeControllerDeployment.name] = gaugeControllerDeployment;
   contractDeploymentCollection[gaugeAdderDeployment.name] = gaugeAdderDeployment;
@@ -142,6 +152,9 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[mainnetGaugeDeployment.name] = mainnetGaugeDeployment;
   contractDeploymentCollection[mainnetGaugeFactoryDeployment.name] = mainnetGaugeFactoryDeployment;
   contractDeploymentCollection[tokenholderFactoryDeployment.name] = tokenholderFactoryDeployment;
+  contractDeploymentCollection[bribeVaultDeployment.name] = bribeVaultDeployment;
+  contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
+  contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
 
   return contractDeploymentCollection;
 };

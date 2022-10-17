@@ -1,14 +1,16 @@
-import { ADMIN } from '../../constants';
 import { Contract } from 'ethers';
 import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 
-export const deployToken = async function deployToken(force = false): Promise<ContractDeployment> {
-  const contractName = 'TestBalancerToken';
-  const constructorArgs = [ADMIN, 'Solace Swap Governance Token', 'SWP'];
+export const deployRewardDistributor = async function deployRewardDistributor(
+  bribeVaultDeploymentAddress: string,
+  force = false
+): Promise<ContractDeployment> {
+  const [deployer] = await ethers.getSigners();
+  const contractName = 'RewardDistributor';
+  const constructorArgs = [bribeVaultDeploymentAddress];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
-  const [deployer] = await ethers.getSigners();
 
   // If force == true, forced deploy. Otherwise only deploy if PREDEPLOYED_INSTANCE == undefined
   if (force || !predeployedInstance) {
