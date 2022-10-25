@@ -1,12 +1,12 @@
 import { Contract } from 'ethers';
 import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
-import { ADMIN, BRIBE_VAULT_FEE, BRIBE_VAULT_FEE_MAX } from '../../constants';
+import { ADMIN, ZERO, BRIBE_VAULT_FEE_MAX } from '../../constants';
 
 export const deployBribeVault = async function deployBribeVault(force = false): Promise<ContractDeployment> {
   const [deployer] = await ethers.getSigners();
   const contractName = 'BribeVault';
-  const constructorArgs = [BRIBE_VAULT_FEE, BRIBE_VAULT_FEE_MAX, ADMIN, ADMIN];
+  const constructorArgs = [ZERO, BRIBE_VAULT_FEE_MAX, ADMIN, ADMIN];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
 

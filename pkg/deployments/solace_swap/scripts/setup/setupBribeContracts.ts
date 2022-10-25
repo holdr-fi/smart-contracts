@@ -47,7 +47,7 @@ export const setupBribeContracts = async function setupBribeContracts(
 
   // 1. BribeVault.setDistributor
 
-  if (bribeVaultDistributorValue === ZERO_ADDRESS) {
+  if (bribeVaultDistributorValue !== rewardDistributor.address) {
     logger.info('Setting distributor for Bribe Vault');
     await bribeVault.connect(deployer).setDistributor(rewardDistributor.address);
   }
