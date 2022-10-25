@@ -3,6 +3,7 @@ import {
   verifySolaceSwapContracts,
   setupVotingEscrowSystem,
   setupBribingSystem,
+  updateBribes,
 } from './scripts';
 import { ContractDeploymentCollection } from './types';
 
@@ -10,8 +11,9 @@ async function main() {
   console.time('script_run_time');
   const contractDeploymentCollection: ContractDeploymentCollection = await deploySolaceSwapContracts();
   // await verifySolaceSwapContracts(contractDeploymentCollection, true);
-  await setupVotingEscrowSystem(contractDeploymentCollection);
-  await setupBribingSystem(contractDeploymentCollection);
+  // await setupVotingEscrowSystem(contractDeploymentCollection);
+  // await setupBribingSystem(contractDeploymentCollection);
+  await updateBribes(contractDeploymentCollection);
 }
 
 main()

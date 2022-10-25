@@ -31,7 +31,13 @@ import {
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
-export const deploySolaceSwapContracts = async function deploySolaceSwapContracts(): Promise<ContractDeploymentCollection> {
+export const deploySolaceSwapContracts = async function deploySolaceSwapContracts(
+  skip = false
+): Promise<ContractDeploymentCollection> {
+  if (skip === true) {
+    return {};
+  }
+
   // Token deployment
   const tokenDeployment: ContractDeployment = await deployToken();
   const tokenDeployment2: ContractDeployment = await deployToken2();
