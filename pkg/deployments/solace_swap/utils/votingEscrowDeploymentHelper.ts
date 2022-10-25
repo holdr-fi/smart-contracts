@@ -130,19 +130,26 @@ export class VotingEscrowDeploymentHelper {
     return gaugeContract;
   }
 
-  async createMainnetGauge(poolAddress: string): Promise<void> {
+  async createMainnetGauge(poolAddress: string, poolName: string): Promise<void> {
     const currentGauge = await this.mainnetGaugeFactory.getPoolGauge(poolAddress);
+    console.log('createMainnetGauge - currentGauge: ', currentGauge);
 
     if (currentGauge === ZERO_ADDRESS) {
       const tx = await this.mainnetGaugeFactory.connect(this.signer).create(poolAddress);
       const log = await tx.wait();
       const gauge = log?.events[0].args[0];
       await this.gaugeAdder.connect(this.signer).addEthereumGauge(gauge);
-      this.task.save({ ['MainnetGauge']: gauge });
+      this.task.save({ [poolName]: gauge });
+    } else if (!(await this.gaugeController.gauge_exists(currentGauge))) {
+      await this.gaugeAdder.connect(this.signer).addEthereumGauge(currentGauge);
+      const output = this.task.output({ ensure: false });
+      if (output[poolName] === undefined) {
+        this.task.save({ [poolName]: currentGauge });
+      }
     } else {
       const output = this.task.output({ ensure: false });
-      if (output['MainnetGauge'] === undefined) {
-        this.task.save({ ['MainnetGauge']: currentGauge });
+      if (output[poolName] === undefined) {
+        this.task.save({ [poolName]: currentGauge });
       }
     }
   }

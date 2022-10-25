@@ -19,7 +19,8 @@ export const setupBribeContracts = async function setupBribeContracts(
   const balancerBribe = contractDeploymentCollection['BalancerBribe'].instance;
   const swpToken = contractDeploymentCollection['TestBalancerToken'].instance;
   const ethToken = contractDeploymentCollection['TestBalancerToken2'].instance;
-  const gauge = new Contract(output['MainnetGauge'], GaugeABI, deployer.provider);
+  const rnd0Token = contractDeploymentCollection['TestBalancerToken3'].instance;
+  const gauge = new Contract(output['RND0Gauge'], GaugeABI, deployer.provider);
   const gaugeProposal = solidityKeccak256(['address'], [gauge.address]);
 
   const [
@@ -27,19 +28,21 @@ export const setupBribeContracts = async function setupBribeContracts(
     bribeVaultDepositorRole,
     isSwpWhitelisted,
     isEthWhitelisted,
+    isRnd0Whitelisted,
     gaugeProposalDeadline,
     currentTimestamp,
-    bribeVaultSwpApprovalAmount,
     bribeVaultEthApprovalAmount,
+    bribeVaultRnd0ApprovalAmount,
   ] = await Promise.all([
     bribeVault.distributor(),
     bribeVault.DEPOSITOR_ROLE(),
     balancerBribe.isWhitelistedToken(swpToken.address),
     balancerBribe.isWhitelistedToken(ethToken.address),
+    balancerBribe.isWhitelistedToken(ethToken.address),
     balancerBribe.proposalDeadlines(gaugeProposal),
     getCurrentTimestamp(deployer.provider),
-    swpToken.allowance(deployer.address, bribeVault.address),
     ethToken.allowance(deployer.address, bribeVault.address),
+    rnd0Token.allowance(deployer.address, bribeVault.address),
   ]);
 
   // 1. BribeVault.setDistributor
@@ -73,19 +76,24 @@ export const setupBribeContracts = async function setupBribeContracts(
     await balancerBribe.connect(deployer).addWhitelistTokens([ethToken.address]);
   }
 
+  if (isRnd0Whitelisted === false) {
+    logger.info('Adding RND0 token to BalancerBribe.sol whitelist');
+    await balancerBribe.connect(deployer).addWhitelistTokens([rnd0Token.address]);
+  }
+
   // 4. BalancerBribe.addWhitelistTokens.setGaugeProposal => BalancerBribe.depositBribeERC20
   if (gaugeProposalDeadline.lte(currentTimestamp)) {
-    logger.info('Setting Bribe Proposal for SWP-ETH gauge');
+    logger.info('Setting Bribe Proposal for RND0-ETH gauge');
     await balancerBribe.connect(deployer).setGaugeProposal(gauge.address, currentTimestamp + WEEK);
-    if (bribeVaultSwpApprovalAmount.eq(ZERO)) {
+    if (bribeVaultRnd0ApprovalAmount.eq(ZERO)) {
       await swpToken.connect(deployer).approve(bribeVault.address, MaxUint256);
     }
     if (bribeVaultEthApprovalAmount.eq(ZERO)) {
       await ethToken.connect(deployer).approve(bribeVault.address, MaxUint256);
     }
-    logger.info('Depositing 10K SWP as a bribe for SPT-ETH gauge');
+    logger.info('Depositing 10K SWP as a bribe for RND0-ETH gauge');
     await balancerBribe.connect(deployer).depositBribeERC20(gaugeProposal, swpToken.address, ONE_ETHER.mul(10000));
-    logger.info('Depositing 10K ETH as a bribe for SPT-ETH gauge');
+    logger.info('Depositing 10K ETH as a bribe for RND0-ETH gauge');
     await balancerBribe.connect(deployer).depositBribeERC20(gaugeProposal, ethToken.address, ONE_ETHER.mul(10000));
   }
 };

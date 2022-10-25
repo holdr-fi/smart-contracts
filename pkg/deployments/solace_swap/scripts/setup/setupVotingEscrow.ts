@@ -35,11 +35,15 @@ export const setupVotingEscrow = async function setupVotingEscrow(
     task
   );
 
-  const gaugeTypes: { [id: number]: string } = { [0]: 'veSWP' };
-  const output = task.output({ ensure: false });
+  const gaugeTypes: { [id: number]: string } = {
+    [0]: 'LiquidityMiningCommittee',
+    [1]: 'veSWP',
+    [2]: 'Ethereum',
+    [3]: 'Polygon',
+    [4]: 'Arbitrum',
+  };
 
-  // Preselected pools to create gauges for
-  const initialPools = [output['SPT']];
+  const output = task.output({ ensure: false });
 
   /**
    * CHECKS
@@ -92,11 +96,18 @@ export const setupVotingEscrow = async function setupVotingEscrow(
    * 2. Create gauge types and set weight
    */
 
-  if ((await gaugeController.n_gauge_types()).eq(ZERO)) {
+  if ((await gaugeController.n_gauge_types()).lt(5)) {
     logger.info('Creating gauge types');
     await helper.grantRole(deployer.address, authorizerAdaptor, gaugeController.interface, 'add_type(string,uint256)');
-    // Create single gauge type with 100% weight.
-    await helper.performAction(gaugeController, 'add_type(string,uint256)', [gaugeTypes[0], ONE_HUNDRED_PERCENT]);
+    // Create five gauges with 20% weight
+
+    for (const gaugeType in gaugeTypes) {
+      await helper.performAction(gaugeController, 'add_type(string,uint256)', [
+        gaugeTypes[gaugeType],
+        ONE_HUNDRED_PERCENT,
+      ]);
+    }
+
     await helper.revokeRole(deployer.address, authorizerAdaptor, gaugeController.interface, 'add_type(string,uint256)');
   }
 
@@ -150,6 +161,16 @@ export const setupVotingEscrow = async function setupVotingEscrow(
    * 5. Create and setup liquidity gauge
    */
 
+  // Try-catch because this view function throws an error if invalid query.
+  try {
+    await gaugeAdder.getFactoryForGaugeType(2, 0);
+  } catch {
+    logger.info('Adding liquidityGaugeFactory as permitted factory for type 2 gauge to GaugeAdder');
+    await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addGaugeFactory');
+    await gaugeAdder.connect(deployer).addGaugeFactory(mainnetGaugeFactory.address, 2);
+    await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addGaugeFactory');
+  }
+
   if (output['MainnetGauge'] === undefined) {
     const liquidityGaugeInterface = new ethers.utils.Interface(LiquidityGaugeV5ABI);
 
@@ -166,9 +187,14 @@ export const setupVotingEscrow = async function setupVotingEscrow(
 
     logger.info('Creating new liquidity gauge and adding to GaugeController');
     await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
-    for (let i = 0; i < initialPools.length; i++) {
-      await helper.createMainnetGauge(initialPools[i]);
-    }
+    await helper.createMainnetGauge(output['SPT'], 'MainnetGauge');
+    await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
+  }
+
+  if (output['RND0Gauge'] === undefined) {
+    logger.info('Creating new liquidity gauge for RND0-ETH pool and adding to GaugeController');
+    await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
+    await helper.createMainnetGauge(output['NewWeightedPool'], 'RND0Gauge');
     await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');
   }
 

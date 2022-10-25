@@ -1,13 +1,13 @@
 import { ADMIN } from '../../constants';
 import { Contract } from 'ethers';
 import { ContractDeployment } from '../../types';
-import { deployDuplicateContract, getPredeployedInstanceForDuplicate } from '../../utils';
 import { task, ethers } from '../../input';
+import { deployDuplicateContract, getPredeployedInstanceForDuplicate } from '../../utils';
 
-export const deployToken2 = async function deployToken2(force = false): Promise<ContractDeployment> {
+export const deployToken3 = async function deployToken3(force = false): Promise<ContractDeployment> {
   const artifactName = 'TestBalancerToken';
-  const contractName = 'TestBalancerToken2';
-  const constructorArgs = [ADMIN, 'ETH', 'ETH'];
+  const contractName = 'TestBalancerToken3';
+  const constructorArgs = [ADMIN, 'RND0', 'RND0'];
   let instance: Contract;
   const predeployedInstance = await getPredeployedInstanceForDuplicate(contractName, artifactName, task);
   const [deployer] = await ethers.getSigners();

@@ -7,3 +7,5 @@ export * from './require';
 export * from './delay';
 export * from './votingEscrowDeploymentHelper';
 export * from './getCurrentTimestamp';
+export * from './getPredeployedInstanceForDuplicate';
+export * from './deployDuplicateContract';

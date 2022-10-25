@@ -7,5 +7,5 @@
  */
 
 export const GWEI = 10 ** 9;
-export const MAX_FEE = 80 * GWEI;
+export const MAX_FEE = 90 * GWEI;
 export const MAX_PRIORITY_FEE = 2 * GWEI;

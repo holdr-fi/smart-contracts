@@ -57,4 +57,7 @@ export const config: HardhatUserConfig = {
       },
     ],
   },
+  vyper: {
+    version: '0.3.1',
+  },
 };

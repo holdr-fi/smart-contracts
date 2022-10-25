@@ -1,6 +1,7 @@
 import {
   deployToken,
   deployToken2,
+  deployToken3,
   deployAuthorizer,
   deployVault,
   deployBalancerHelpers,
@@ -9,7 +10,8 @@ import {
   deployWeightedPoolFactoryV2,
   deployAuthorizerAdaptor,
   deployTokenAdmin,
-  deployWeightedPool,
+  deployCoreWeightedPool,
+  deployNewWeightedPool,
   deployVotingEscrow,
   deployGaugeController,
   deployGaugeAdder,
@@ -33,6 +35,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   // Token deployment
   const tokenDeployment: ContractDeployment = await deployToken();
   const tokenDeployment2: ContractDeployment = await deployToken2();
+  const tokenDeployment3: ContractDeployment = await deployToken3();
 
   // DEX contracts deployments
   const authorizerDeployment: ContractDeployment = await deployAuthorizer();
@@ -57,9 +60,16 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     tokenDeployment.address
   );
 
-  const weightedPoolDeployment: ContractDeployment = await deployWeightedPool(
+  const coreWeightedPoolDeployment: ContractDeployment = await deployCoreWeightedPool(
     tokenDeployment.instance,
     tokenDeployment2.instance,
+    weightedPoolFactoryDeployment.instance,
+    vaultDeployment.instance
+  );
+
+  const newWeightedPoolDeployment: ContractDeployment = await deployNewWeightedPool(
+    tokenDeployment2.instance,
+    tokenDeployment3.instance,
     weightedPoolFactoryDeployment.instance,
     vaultDeployment.instance
   );
@@ -128,6 +138,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
   contractDeploymentCollection[tokenDeployment2.name] = tokenDeployment2;
+  contractDeploymentCollection[tokenDeployment3.name] = tokenDeployment3;
   contractDeploymentCollection[authorizerDeployment.name] = authorizerDeployment;
   contractDeploymentCollection[vaultDeployment.name] = vaultDeployment;
   contractDeploymentCollection[balancerHelpersDeployment.name] = balancerHelpersDeployment;
@@ -138,7 +149,8 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[weightedPoolFactoryDeployment.name] = weightedPoolFactoryDeployment;
   contractDeploymentCollection[authorizerAdaptorDeployment.name] = authorizerAdaptorDeployment;
   contractDeploymentCollection[tokenAdminDeployment.name] = tokenAdminDeployment;
-  contractDeploymentCollection[weightedPoolDeployment.name] = weightedPoolDeployment;
+  contractDeploymentCollection[coreWeightedPoolDeployment.name] = coreWeightedPoolDeployment;
+  contractDeploymentCollection[newWeightedPoolDeployment.name] = newWeightedPoolDeployment;
   contractDeploymentCollection[votingEscrowDeployment.name] = votingEscrowDeployment;
   contractDeploymentCollection[gaugeControllerDeployment.name] = gaugeControllerDeployment;
   contractDeploymentCollection[gaugeAdderDeployment.name] = gaugeAdderDeployment;

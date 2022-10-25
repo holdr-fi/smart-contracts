@@ -1,5 +1,6 @@
 export * from './deployToken';
 export * from './deployToken2';
+export * from './deployToken3';
 export * from './deployAuthorizer';
 export * from './deployVault';
 export * from './deployBalancerHelpers';
@@ -7,7 +8,8 @@ export * from './deployBalancerQueries';
 export * from './deployProtocolFeePercentagesProvider';
 export * from './deployWeightedPoolFactoryV2';
 export * from './deployAuthorizerAdaptor';
-export * from './deployWeightedPool';
+export * from './deployCoreWeightedPool';
+export * from './deployNewWeightedPool';
 export * from './deployTokenAdmin';
 export * from './deployVotingEscrow';
 export * from './deployGaugeController';
