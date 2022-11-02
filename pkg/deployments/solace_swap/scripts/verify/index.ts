@@ -21,3 +21,4 @@ export * from './verifyTokenholderFactory';
 export * from './verifyBribeVault';
 export * from './verifyRewardDistributor';
 export * from './verifyBalancerBribe';
+export * from './verifyMulticall';

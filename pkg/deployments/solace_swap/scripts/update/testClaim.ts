@@ -2,7 +2,6 @@ import { ContractDeploymentCollection } from '../../types';
 import axios from 'axios';
 import { ethers, logger } from '../../input';
 import { constants } from 'ethers';
-const { HashZero } = constants;
 
 export const testClaim = async function testClaim(
   contractDeploymentCollection: ContractDeploymentCollection

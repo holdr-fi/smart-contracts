@@ -28,6 +28,7 @@ import {
   deployBribeVault,
   deployRewardDistributor,
   deployBalancerBribe,
+  deployMulticall,
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
@@ -140,6 +141,8 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   const rewardDistributorDeployment: ContractDeployment = await deployRewardDistributor(bribeVaultDeployment.address);
   const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
 
+  const multicallDeployment: ContractDeployment = await deployMulticall();
+
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
@@ -173,6 +176,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[bribeVaultDeployment.name] = bribeVaultDeployment;
   contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
   contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
+  contractDeploymentCollection[multicallDeployment.name] = multicallDeployment;
 
   return contractDeploymentCollection;
 };

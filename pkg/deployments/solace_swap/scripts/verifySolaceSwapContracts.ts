@@ -23,6 +23,7 @@ import {
   verifyBribeVault,
   verifyRewardDistributor,
   verifyBalancerBribe,
+  verifyMulticall,
 } from './verify';
 
 export const verifySolaceSwapContracts = async function verifySolaceSwapContracts(
@@ -57,7 +58,8 @@ export const verifySolaceSwapContracts = async function verifySolaceSwapContract
   // );
   // await verifyLiquidityGaugeFactory(contractDeploymentCollection['LiquidityGaugeFactory'], force);
   // await verifyTokenholderFactory(contractDeploymentCollection['BALTokenHolderFactory'], force);
-  await verifyBribeVault(contractDeploymentCollection['BribeVault'], force);
-  await verifyRewardDistributor(contractDeploymentCollection['RewardDistributor'], force);
-  await verifyBalancerBribe(contractDeploymentCollection['BalancerBribe'], force);
+  // await verifyBribeVault(contractDeploymentCollection['BribeVault'], force);
+  // await verifyRewardDistributor(contractDeploymentCollection['RewardDistributor'], force);
+  // await verifyBalancerBribe(contractDeploymentCollection['BalancerBribe'], force);
+  await verifyMulticall(contractDeploymentCollection['Multicall2'], force);
 };

@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import { config as dotenv_config } from 'dotenv';
-import '@nomiclabs/hardhat-vyper';
 dotenv_config();
 
 export const config: HardhatUserConfig = {
@@ -56,8 +55,5 @@ export const config: HardhatUserConfig = {
         },
       },
     ],
-  },
-  vyper: {
-    version: '0.3.1',
   },
 };
