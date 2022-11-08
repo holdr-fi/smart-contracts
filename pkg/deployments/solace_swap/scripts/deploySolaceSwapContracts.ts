@@ -29,6 +29,7 @@ import {
   deployRewardDistributor,
   deployBalancerBribe,
   deployMulticall,
+  deployGaugeControllerQuerier,
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
@@ -142,6 +143,9 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
 
   const multicallDeployment: ContractDeployment = await deployMulticall();
+  const gaugeControllerQuerierDeployment: ContractDeployment = await deployGaugeControllerQuerier(
+    gaugeControllerDeployment.address
+  );
 
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
@@ -177,6 +181,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
   contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
   contractDeploymentCollection[multicallDeployment.name] = multicallDeployment;
+  contractDeploymentCollection[gaugeControllerQuerierDeployment.name] = gaugeControllerQuerierDeployment;
 
   return contractDeploymentCollection;
 };

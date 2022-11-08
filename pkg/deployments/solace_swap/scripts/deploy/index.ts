@@ -28,3 +28,4 @@ export * from './deployBribeVault';
 export * from './deployRewardDistributor';
 export * from './deployBalancerBribe';
 export * from './deployMulticall';
+export * from './deployGaugeControllerQuerier';
