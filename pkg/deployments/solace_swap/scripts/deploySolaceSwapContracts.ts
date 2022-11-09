@@ -1,7 +1,8 @@
 import {
   deployToken,
-  deployToken2,
-  deployToken3,
+  deployTestToken,
+  deployTestToken2,
+  deployTestToken3,
   deployAuthorizer,
   deployVault,
   deployBalancerHelpers,
@@ -10,8 +11,8 @@ import {
   deployWeightedPoolFactoryV2,
   deployAuthorizerAdaptor,
   deployTokenAdmin,
-  deployCoreWeightedPool,
-  deployNewWeightedPool,
+  deployWeightedPoolCore,
+  deployWeightedPoolNew,
   deployVotingEscrow,
   deployGaugeController,
   deployGaugeAdder,
@@ -30,6 +31,8 @@ import {
   deployBalancerBribe,
   deployMulticall,
   deployGaugeControllerQuerier,
+  deployLBPFactory,
+  deployStablePoolFactory,
 } from './deploy';
 import { ContractDeployment, ContractDeploymentCollection } from '../types';
 
@@ -41,9 +44,10 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   }
 
   // Token deployment
-  const tokenDeployment: ContractDeployment = await deployToken();
-  const tokenDeployment2: ContractDeployment = await deployToken2();
-  const tokenDeployment3: ContractDeployment = await deployToken3();
+  const holdrDeployment: ContractDeployment = await deployToken();
+  const tokenDeployment: ContractDeployment = await deployTestToken();
+  const tokenDeployment2: ContractDeployment = await deployTestToken2();
+  const tokenDeployment3: ContractDeployment = await deployTestToken3();
 
   // DEX contracts deployments
   const authorizerDeployment: ContractDeployment = await deployAuthorizer();
@@ -60,6 +64,12 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     protocolFeePercentagesProviderDeployment.address
   );
 
+  const LBPFactoryDeployment: ContractDeployment = await deployLBPFactory(vaultDeployment.address);
+  const stablePoolFactoryDeployment: ContractDeployment = await deployStablePoolFactory(
+    vaultDeployment.address,
+    protocolFeePercentagesProviderDeployment.address
+  );
+
   // veToken system deployments
   const authorizerAdaptorDeployment: ContractDeployment = await deployAuthorizerAdaptor(vaultDeployment.address);
 
@@ -68,21 +78,21 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     tokenDeployment.address
   );
 
-  const coreWeightedPoolDeployment: ContractDeployment = await deployCoreWeightedPool(
+  const coreWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolCore(
     tokenDeployment.instance,
     tokenDeployment2.instance,
     weightedPoolFactoryDeployment.instance,
     vaultDeployment.instance
   );
 
-  const newWeightedPoolDeployment: ContractDeployment = await deployNewWeightedPool(
+  const newWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolNew(
     tokenDeployment2.instance,
     tokenDeployment3.instance,
     weightedPoolFactoryDeployment.instance,
     vaultDeployment.instance
   );
 
-  // Require SPT token setup
+  // Require HPT token setup
   const votingEscrowDeployment: ContractDeployment = await deployVotingEscrow(authorizerAdaptorDeployment.address);
 
   const gaugeControllerDeployment: ContractDeployment = await deployGaugeController(
@@ -137,11 +147,11 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   );
 
   // Deploy Hidden Hand Bribe contracts
-
   const bribeVaultDeployment: ContractDeployment = await deployBribeVault();
   const rewardDistributorDeployment: ContractDeployment = await deployRewardDistributor(bribeVaultDeployment.address);
   const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
 
+  // Deploy contracts required for frontend and subgraph
   const multicallDeployment: ContractDeployment = await deployMulticall();
   const gaugeControllerQuerierDeployment: ContractDeployment = await deployGaugeControllerQuerier(
     gaugeControllerDeployment.address
@@ -149,6 +159,7 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
 
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
+  contractDeploymentCollection[holdrDeployment.name] = holdrDeployment;
   contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
   contractDeploymentCollection[tokenDeployment2.name] = tokenDeployment2;
   contractDeploymentCollection[tokenDeployment3.name] = tokenDeployment3;
@@ -160,6 +171,8 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     protocolFeePercentagesProviderDeployment.name
   ] = protocolFeePercentagesProviderDeployment;
   contractDeploymentCollection[weightedPoolFactoryDeployment.name] = weightedPoolFactoryDeployment;
+  contractDeploymentCollection[LBPFactoryDeployment.name] = LBPFactoryDeployment;
+  contractDeploymentCollection[stablePoolFactoryDeployment.name] = stablePoolFactoryDeployment;
   contractDeploymentCollection[authorizerAdaptorDeployment.name] = authorizerAdaptorDeployment;
   contractDeploymentCollection[tokenAdminDeployment.name] = tokenAdminDeployment;
   contractDeploymentCollection[coreWeightedPoolDeployment.name] = coreWeightedPoolDeployment;

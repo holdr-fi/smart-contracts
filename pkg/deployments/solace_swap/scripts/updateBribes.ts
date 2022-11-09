@@ -1,4 +1,4 @@
-import { transferBribes, updateRewardsMetadata, testClaim } from './update';
+import { transferBribes, updateRewardsMetadata, testClaim } from './bribes';
 import { ContractDeploymentCollection } from '../types';
 
 export const updateBribes = async function updateBribes(

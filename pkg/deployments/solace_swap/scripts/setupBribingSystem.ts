@@ -1,4 +1,4 @@
-import { setupBribeContracts } from './setup';
+import { setupBribeContracts } from './bribes';
 import { ContractDeploymentCollection } from '../types';
 
 export const setupBribingSystem = async function setupBribingSystem(

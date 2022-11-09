@@ -2,6 +2,7 @@ import { Contract } from 'ethers';
 import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 
+// TO-DO Rename to 'Vote Escrowed HLDR' and 'veHLDR'
 export const deployVotingEscrow = async function deployVotingEscrow(
   authorizerAdaptorAddress: string,
   force = false
@@ -9,6 +10,7 @@ export const deployVotingEscrow = async function deployVotingEscrow(
   const output = task.output({ ensure: false });
   const contractName = 'VotingEscrow';
   const constructorArgs = [output['SPT'], 'Vote Escrowed SPT', 'veSWP', authorizerAdaptorAddress];
+  // const constructorArgs = [output['HPT'], 'Vote Escrowed HPT', 'veHLDR', authorizerAdaptorAddress];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();

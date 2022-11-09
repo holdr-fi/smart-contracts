@@ -1,11 +1,12 @@
-import { ADMIN } from '../../constants';
 import { Contract } from 'ethers';
 import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 
+// TO-DO Rename to 'Hodlr Governance Token', 'HLDR' for Aurora deployment
+// TO-DO Work out initial supply and emission dynamics
 export const deployToken = async function deployToken(force = false): Promise<ContractDeployment> {
-  const contractName = 'TestBalancerToken';
-  const constructorArgs = [ADMIN, 'Solace Swap Governance Token', 'SWP'];
+  const contractName = 'HoldrGovernanceToken';
+  const constructorArgs = ['Holdr Governance Token', 'HLDR'];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();

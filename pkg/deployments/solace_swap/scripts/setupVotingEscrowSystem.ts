@@ -1,4 +1,4 @@
-import { setupVotingEscrow, getVeSPT, voteForGauge } from './setup';
+import { setupVotingEscrow, getVeSPT, voteForGauge } from './vetokens';
 import { ContractDeploymentCollection } from '../types';
 
 export const setupVotingEscrowSystem = async function setupVotingEscrowSystem(

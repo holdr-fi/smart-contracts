@@ -6,6 +6,6 @@ export const verifyToken = async function verifyToken(
   force = false
 ): Promise<void> {
   if (force || !contractDeployment.predeployed) {
-    await task.verify('TestBalancerToken', contractDeployment.address, contractDeployment.constructorArgs);
+    await task.verify('HoldrGovernanceToken', contractDeployment.address, contractDeployment.constructorArgs);
   }
 };
