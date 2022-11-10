@@ -2,18 +2,15 @@
 // https://astraguildventures.medium.com/how-to-participate-in-the-agv-auction-on-copperlaunch-272429af78ae
 // https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/pool-weighted/contracts/lbp/LiquidityBootstrappingPool.sol??
 
-import { ContractDeploymentCollection } from '../../types';
-import { JoinPoolRequest } from '@balancer-labs/balancer-js';
+import { ContractDeploymentCollection, CreateLBPParams } from '../../types';
 import { ethers, logger, task } from '../../input';
-import { BigNumberish, Contract, BigNumber } from 'ethers';
+import { Contract } from 'ethers';
 import { AssetHelpers, ONE_ETHER, ZERO } from '../../utils';
 // SOLACE TODO - swap out for wNEAR on production
-import { WETH_ADDRESS, MAX_UINT256, ONE_MILLION_ETHER } from '../../constants';
+import { WETH_ADDRESS, ONE_MILLION_ETHER } from '../../constants';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
 import LBP_ABI from '../../../tasks/2022xxxx-solace-swap/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { DAY } from '@balancer-labs/v2-helpers/src/time';
-const { defaultAbiCoder } = ethers.utils;
+import { provideInitialLiquidity, commenceLBP, verifyLBPPool } from './';
 
 export const launchLBP = async function launchLBP(
   contractDeploymentCollection: ContractDeploymentCollection
@@ -75,122 +72,4 @@ export const launchLBP = async function launchLBP(
 
   // Let people swap
   // Exit pool
-};
-
-const verifyLBPPool = async function verifyLBPPool(
-  contractDeploymentCollection: ContractDeploymentCollection,
-  createLBPParams: CreateLBPParams,
-  deployerAddress: string,
-  poolAddress: string
-) {
-  const { pauseWindowDuration, bufferPeriodDuration } = await contractDeploymentCollection[
-    'NoProtocolFeeLiquidityBootstrappingPoolFactory'
-  ].instance.getPauseConfiguration();
-
-  console.log('pauseWindowDuration: ', pauseWindowDuration);
-  console.log('bufferPeriodDuration: ', bufferPeriodDuration);
-
-  const constructorArgsAsStruct: LBPPoolConstructorParams = {
-    vault: contractDeploymentCollection['Vault'].address,
-    name: createLBPParams.name,
-    symbol: createLBPParams.symbol,
-    tokens: createLBPParams.tokens,
-    normalizedWeights: createLBPParams.weights,
-    swapFeePercentage: createLBPParams.swapFeePercentage,
-    pauseWindowDuration: pauseWindowDuration,
-    bufferPeriodDuration: bufferPeriodDuration,
-    owner: deployerAddress,
-    swapEnabledOnStart: createLBPParams.swapEnabledOnStart,
-  };
-
-  let retries = 0;
-  while (retries <= 10) {
-    await task.verify('NoProtocolFeeLiquidityBootstrappingPool', poolAddress, Object.values(constructorArgsAsStruct));
-    retries += 1;
-  }
-};
-
-const commenceLBP = async function commenceLBP(
-  poolAddress: string,
-  provider: SignerWithAddress,
-  sortedWeights: BigNumber[]
-) {
-  const poolInstance = new Contract(poolAddress, LBP_ABI, provider);
-  const currentTime = Math.floor(Date.now() / 1000);
-  // SOLACE TODO - Adjust params here
-  // Setup 3 DAY LBP, starting in 24 hours.
-  // 98/2 => 10/90
-  await poolInstance.connect(provider).updateWeightsGradually(
-    currentTime + 300,
-    currentTime + 300 * 3 * DAY,
-    sortedWeights.map((weight) => {
-      if (weight.eq(fp(0.02))) {
-        return fp(0.9);
-      } else {
-        return fp(0.1);
-      }
-    })
-  );
-};
-
-const provideInitialLiquidity = async function provideInitialLiquidity(
-  poolContract: Contract,
-  vaultContract: Contract,
-  token0: Contract,
-  token1: Contract,
-  initialLiquidityToken0: BigNumber,
-  provider: SignerWithAddress
-) {
-  const poolId = await poolContract.getPoolId();
-  const assetHelpers = new AssetHelpers(WETH_ADDRESS);
-  const tokens = assetHelpers.sortTokens(
-    [token0.address, token1.address],
-    [fp(0.02).mul(initialLiquidityToken0).div(fp(1.0)), fp(0.98).mul(initialLiquidityToken0).div(fp(1.0))]
-  );
-  const JoinKind = 0;
-  const sortedTokens = tokens[0];
-  const exactAmountsIn = tokens[1];
-
-  const abi = ['uint256', 'uint256[]'];
-  const data = [JoinKind, exactAmountsIn];
-  const userDataEncoded = defaultAbiCoder.encode(abi, data);
-  const joinPoolRequest: JoinPoolRequest = {
-    assets: sortedTokens,
-    maxAmountsIn: exactAmountsIn,
-    userData: userDataEncoded,
-    fromInternalBalance: false,
-  };
-
-  logger.info('Approving Vault to transfer HLDR and token1 tokens');
-  await token0.connect(provider).approve(vaultContract.address, MAX_UINT256);
-  await token1.connect(provider).approve(vaultContract.address, MAX_UINT256);
-  logger.info('Seeding initial liquidity for LBP');
-  const tx = await vaultContract
-    .connect(provider)
-    .joinPool(poolId, provider.address, provider.address, joinPoolRequest);
-  await tx.wait();
-  logger.success('Seeded initial liquidity for SWP-ETH 80-20 SPT pool');
-};
-
-type CreateLBPParams = {
-  name: string;
-  symbol: string;
-  tokens: string[];
-  weights: BigNumberish[];
-  swapFeePercentage: BigNumberish;
-  owner: string;
-  swapEnabledOnStart: true;
-};
-
-type LBPPoolConstructorParams = {
-  vault: string;
-  name: string;
-  symbol: string;
-  tokens: string[];
-  normalizedWeights: BigNumberish[];
-  swapFeePercentage: BigNumberish;
-  pauseWindowDuration: BigNumberish;
-  bufferPeriodDuration: BigNumberish;
-  owner: string;
-  swapEnabledOnStart: boolean;
 };
