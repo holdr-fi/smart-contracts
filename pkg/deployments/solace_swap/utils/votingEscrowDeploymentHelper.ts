@@ -3,11 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-wit
 import BALTokenHolderABI from '../../tasks/2022xxxx-solace-swap/abi/BALTokenHolder.json';
 import SingleRecipientGaugeABI from '../../tasks/2022xxxx-solace-swap/abi/SingleRecipientGauge.json';
 import Task from '../../src/task';
-import { GWEI } from '../constants/gasValues';
-import { ZERO, ZERO_ADDRESS } from '../constants';
-
-export const MAX_FEE = 80 * GWEI;
-export const MAX_PRIORITY_FEE = 2 * GWEI;
+import { ZERO_ADDRESS } from '../constants';
 
 export class VotingEscrowDeploymentHelper {
   tokenholderFactory: Contract;

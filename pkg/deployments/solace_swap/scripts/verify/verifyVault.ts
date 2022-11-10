@@ -7,13 +7,13 @@ export const verifyVault = async function verifyVault(
 ): Promise<void> {
   if (force || !contractDeployment.predeployed) {
     if (force || !contractDeployment.predeployed) {
-      await task.verify('BALTokenHolderFactory', contractDeployment.address, contractDeployment.constructorArgs);
+      await task.verify('Vault', contractDeployment.address, contractDeployment.constructorArgs);
+      // Deploying Vault, also deploys ProtocolFeesCollector in an internal transaction. We want to verify this too.
+      const feeCollector = await contractDeployment.instance.getProtocolFeesCollector();
+      const feeCollectorArgs = [contractDeployment.address]; // See ProtocolFeesCollector constructor
+      const previousTask = createNewTask('20210418-vault');
+      await previousTask.verify('ProtocolFeesCollector', feeCollector, feeCollectorArgs);
+      await task.save({ ProtocolFeesCollector: feeCollector });
     }
-    // await task.verify('Vault', contractDeployment.address, contractDeployment.constructorArgs);
-    // const feeCollector = await contractDeployment.instance.getProtocolFeesCollector();
-    // const feeCollectorArgs = [contractDeployment.address]; // See ProtocolFeesCollector constructor
-    // const previousTask = createNewTask('20210418-vault');
-    // await previousTask.verify('ProtocolFeesCollector', feeCollector, feeCollectorArgs);
-    // await task.save({ ProtocolFeesCollector: feeCollector });
   }
 };

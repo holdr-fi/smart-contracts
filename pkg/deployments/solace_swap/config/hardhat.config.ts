@@ -3,7 +3,7 @@ import { config as dotenv_config } from 'dotenv';
 dotenv_config();
 
 export const config: HardhatUserConfig = {
-  defaultNetwork: 'mumbai',
+  defaultNetwork: 'aurora',
   networks: {
     aurora: {
       url: process.env.AURORA_URL,

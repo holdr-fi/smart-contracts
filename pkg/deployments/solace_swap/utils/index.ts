@@ -9,3 +9,4 @@ export * from './votingEscrowDeploymentHelper';
 export * from './getCurrentTimestamp';
 export * from './getPredeployedInstanceForDuplicate';
 export * from './deployDuplicateContract';
+export * from './verifyContractFromMainnet';

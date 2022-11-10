@@ -2,7 +2,6 @@ import {
   deployToken,
   deployTestToken,
   deployTestToken2,
-  deployTestToken3,
   deployAuthorizer,
   deployVault,
   deployBalancerHelpers,
@@ -43,13 +42,17 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     return {};
   }
 
-  // Token deployment
-  const holdrDeployment: ContractDeployment = await deployToken();
-  const tokenDeployment: ContractDeployment = await deployTestToken();
-  const tokenDeployment2: ContractDeployment = await deployTestToken2();
-  const tokenDeployment3: ContractDeployment = await deployTestToken3();
+  /*
+   * Token deployment
+   */
 
-  // DEX contracts deployments
+  const holdrDeployment: ContractDeployment = await deployToken();
+  const testTokenDeployment: ContractDeployment = await deployTestToken();
+  const testToken2Deployment: ContractDeployment = await deployTestToken2();
+
+  /*
+   * DEX contracts
+   */
   const authorizerDeployment: ContractDeployment = await deployAuthorizer();
   // Also deployed ProtocolFeesCollector which we can verify.
   const vaultDeployment: ContractDeployment = await deployVault(authorizerDeployment.address);
@@ -70,99 +73,105 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
     protocolFeePercentagesProviderDeployment.address
   );
 
-  // veToken system deployments
+  const multicallDeployment: ContractDeployment = await deployMulticall();
+  const WstETHDeployment: ContractDeployment = await deployWstETH();
+
+  /*
+   * veTokenomics contracts
+   */
+
   const authorizerAdaptorDeployment: ContractDeployment = await deployAuthorizerAdaptor(vaultDeployment.address);
 
   const tokenAdminDeployment: ContractDeployment = await deployTokenAdmin(
     vaultDeployment.address,
-    tokenDeployment.address
+    holdrDeployment.address
   );
 
-  const coreWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolCore(
-    tokenDeployment.instance,
-    tokenDeployment2.instance,
-    weightedPoolFactoryDeployment.instance,
-    vaultDeployment.instance
-  );
+  // Need wNEAR liquidity before this step.
 
-  const newWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolNew(
-    tokenDeployment2.instance,
-    tokenDeployment3.instance,
-    weightedPoolFactoryDeployment.instance,
-    vaultDeployment.instance
-  );
+  // const coreWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolCore(
+  //   tokenDeployment.instance,
+  //   tokenDeployment2.instance,
+  //   weightedPoolFactoryDeployment.instance,
+  //   vaultDeployment.instance
+  // );
 
-  // Require HPT token setup
-  const votingEscrowDeployment: ContractDeployment = await deployVotingEscrow(authorizerAdaptorDeployment.address);
+  // const newWeightedPoolDeployment: ContractDeployment = await deployWeightedPoolNew(
+  //   tokenDeployment2.instance,
+  //   tokenDeployment3.instance,
+  //   weightedPoolFactoryDeployment.instance,
+  //   vaultDeployment.instance
+  // );
 
-  const gaugeControllerDeployment: ContractDeployment = await deployGaugeController(
-    votingEscrowDeployment.address,
-    authorizerAdaptorDeployment.address
-  );
+  // Need HDLR-wNEAR 80-20 pool before this step.
+  // const votingEscrowDeployment: ContractDeployment = await deployVotingEscrow(authorizerAdaptorDeployment.address);
 
-  const gaugeAdderDeployment: ContractDeployment = await deployGaugeAdder(gaugeControllerDeployment.address);
+  // const gaugeControllerDeployment: ContractDeployment = await deployGaugeController(
+  //   votingEscrowDeployment.address,
+  //   authorizerAdaptorDeployment.address
+  // );
 
-  const tokenMinterDeployment: ContractDeployment = await deployTokenMinter(
-    tokenAdminDeployment.address,
-    gaugeControllerDeployment.address
-  );
+  // const gaugeAdderDeployment: ContractDeployment = await deployGaugeAdder(gaugeControllerDeployment.address);
 
-  const singleRecipientGaugeFactoryDeployment: ContractDeployment = await deploySingleRecipientGaugeFactory(
-    tokenMinterDeployment.address
-  );
+  // const tokenMinterDeployment: ContractDeployment = await deployTokenMinter(
+  //   tokenAdminDeployment.address,
+  //   gaugeControllerDeployment.address
+  // );
 
-  const votingEscrowDelegationDeployment: ContractDeployment = await deployVotingEscrowDelegation(
-    votingEscrowDeployment.address,
-    authorizerAdaptorDeployment.address
-  );
+  // const singleRecipientGaugeFactoryDeployment: ContractDeployment = await deploySingleRecipientGaugeFactory(
+  //   tokenMinterDeployment.address
+  // );
 
-  const votingEscrowDelegationProxyDeployment: ContractDeployment = await deployVotingEscrowDelegationProxy(
-    vaultDeployment.address,
-    votingEscrowDeployment.address,
-    votingEscrowDelegationDeployment.address
-  );
+  // const votingEscrowDelegationDeployment: ContractDeployment = await deployVotingEscrowDelegation(
+  //   votingEscrowDeployment.address,
+  //   authorizerAdaptorDeployment.address
+  // );
 
-  const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
+  // const votingEscrowDelegationProxyDeployment: ContractDeployment = await deployVotingEscrowDelegationProxy(
+  //   vaultDeployment.address,
+  //   votingEscrowDeployment.address,
+  //   votingEscrowDelegationDeployment.address
+  // );
 
-  const WstETHDeployment: ContractDeployment = await deployWstETH();
+  // const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
 
-  const batchRelayerDeployment: ContractDeployment = await deployBatchRelayer(
-    vaultDeployment.address,
-    tokenMinterDeployment.address
-  );
+  // const batchRelayerDeployment: ContractDeployment = await deployBatchRelayer(
+  //   vaultDeployment.address,
+  //   tokenMinterDeployment.address
+  // );
 
-  const mainnetGaugeDeployment: ContractDeployment = await deployMainnetGauge(
-    tokenMinterDeployment.address,
-    votingEscrowDelegationProxyDeployment.address,
-    authorizerAdaptorDeployment.address
-  );
+  // const mainnetGaugeDeployment: ContractDeployment = await deployMainnetGauge(
+  //   tokenMinterDeployment.address,
+  //   votingEscrowDelegationProxyDeployment.address,
+  //   authorizerAdaptorDeployment.address
+  // );
 
-  const mainnetGaugeFactoryDeployment: ContractDeployment = await deployMainnetGaugeFactory(
-    mainnetGaugeDeployment.address
-  );
+  // const mainnetGaugeFactoryDeployment: ContractDeployment = await deployMainnetGaugeFactory(
+  //   mainnetGaugeDeployment.address
+  // );
 
-  const tokenholderFactoryDeployment: ContractDeployment = await deployTokenholderFactory(
-    tokenDeployment.address,
-    vaultDeployment.address
-  );
+  // const tokenholderFactoryDeployment: ContractDeployment = await deployTokenholderFactory(
+  //   holdrDeployment.address,
+  //   vaultDeployment.address
+  // );
 
-  // Deploy Hidden Hand Bribe contracts
-  const bribeVaultDeployment: ContractDeployment = await deployBribeVault();
-  const rewardDistributorDeployment: ContractDeployment = await deployRewardDistributor(bribeVaultDeployment.address);
-  const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
+  // const gaugeControllerQuerierDeployment: ContractDeployment = await deployGaugeControllerQuerier(
+  //   gaugeControllerDeployment.address
+  // );
 
-  // Deploy contracts required for frontend and subgraph
-  const multicallDeployment: ContractDeployment = await deployMulticall();
-  const gaugeControllerQuerierDeployment: ContractDeployment = await deployGaugeControllerQuerier(
-    gaugeControllerDeployment.address
-  );
+  /*
+   * Bribr contracts
+   */
+  // const bribeVaultDeployment: ContractDeployment = await deployBribeVault();
+  // const rewardDistributorDeployment: ContractDeployment = await deployRewardDistributor(bribeVaultDeployment.address);
+  // const balancerBribeDeployment: ContractDeployment = await deployBalancerBribe(bribeVaultDeployment.address);
+
 
   // Create return object
   const contractDeploymentCollection: ContractDeploymentCollection = {};
   contractDeploymentCollection[holdrDeployment.name] = holdrDeployment;
-  contractDeploymentCollection[tokenDeployment.name] = tokenDeployment;
-  contractDeploymentCollection[tokenDeployment2.name] = tokenDeployment2;
-  contractDeploymentCollection[tokenDeployment3.name] = tokenDeployment3;
+  contractDeploymentCollection[testTokenDeployment.name] = testTokenDeployment;
+  contractDeploymentCollection[testToken2Deployment.name] = testToken2Deployment;
   contractDeploymentCollection[authorizerDeployment.name] = authorizerDeployment;
   contractDeploymentCollection[vaultDeployment.name] = vaultDeployment;
   contractDeploymentCollection[balancerHelpersDeployment.name] = balancerHelpersDeployment;
@@ -173,28 +182,28 @@ export const deploySolaceSwapContracts = async function deploySolaceSwapContract
   contractDeploymentCollection[weightedPoolFactoryDeployment.name] = weightedPoolFactoryDeployment;
   contractDeploymentCollection[LBPFactoryDeployment.name] = LBPFactoryDeployment;
   contractDeploymentCollection[stablePoolFactoryDeployment.name] = stablePoolFactoryDeployment;
+  contractDeploymentCollection[multicallDeployment.name] = multicallDeployment;
+  contractDeploymentCollection[WstETHDeployment.name] = WstETHDeployment;
   contractDeploymentCollection[authorizerAdaptorDeployment.name] = authorizerAdaptorDeployment;
   contractDeploymentCollection[tokenAdminDeployment.name] = tokenAdminDeployment;
-  contractDeploymentCollection[coreWeightedPoolDeployment.name] = coreWeightedPoolDeployment;
-  contractDeploymentCollection[newWeightedPoolDeployment.name] = newWeightedPoolDeployment;
-  contractDeploymentCollection[votingEscrowDeployment.name] = votingEscrowDeployment;
-  contractDeploymentCollection[gaugeControllerDeployment.name] = gaugeControllerDeployment;
-  contractDeploymentCollection[gaugeAdderDeployment.name] = gaugeAdderDeployment;
-  contractDeploymentCollection[tokenMinterDeployment.name] = tokenMinterDeployment;
-  contractDeploymentCollection[singleRecipientGaugeFactoryDeployment.name] = singleRecipientGaugeFactoryDeployment;
-  contractDeploymentCollection[votingEscrowDelegationDeployment.name] = votingEscrowDelegationDeployment;
-  contractDeploymentCollection[votingEscrowDelegationProxyDeployment.name] = votingEscrowDelegationProxyDeployment;
-  contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
-  contractDeploymentCollection[WstETHDeployment.name] = WstETHDeployment;
-  contractDeploymentCollection[batchRelayerDeployment.name] = batchRelayerDeployment;
-  contractDeploymentCollection[mainnetGaugeDeployment.name] = mainnetGaugeDeployment;
-  contractDeploymentCollection[mainnetGaugeFactoryDeployment.name] = mainnetGaugeFactoryDeployment;
-  contractDeploymentCollection[tokenholderFactoryDeployment.name] = tokenholderFactoryDeployment;
-  contractDeploymentCollection[bribeVaultDeployment.name] = bribeVaultDeployment;
-  contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
-  contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
-  contractDeploymentCollection[multicallDeployment.name] = multicallDeployment;
-  contractDeploymentCollection[gaugeControllerQuerierDeployment.name] = gaugeControllerQuerierDeployment;
+  // contractDeploymentCollection[coreWeightedPoolDeployment.name] = coreWeightedPoolDeployment;
+  // contractDeploymentCollection[newWeightedPoolDeployment.name] = newWeightedPoolDeployment;
+  // contractDeploymentCollection[votingEscrowDeployment.name] = votingEscrowDeployment;
+  // contractDeploymentCollection[gaugeControllerDeployment.name] = gaugeControllerDeployment;
+  // contractDeploymentCollection[gaugeAdderDeployment.name] = gaugeAdderDeployment;
+  // contractDeploymentCollection[tokenMinterDeployment.name] = tokenMinterDeployment;
+  // contractDeploymentCollection[singleRecipientGaugeFactoryDeployment.name] = singleRecipientGaugeFactoryDeployment;
+  // contractDeploymentCollection[votingEscrowDelegationDeployment.name] = votingEscrowDelegationDeployment;
+  // contractDeploymentCollection[votingEscrowDelegationProxyDeployment.name] = votingEscrowDelegationProxyDeployment;
+  // contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
+  // contractDeploymentCollection[batchRelayerDeployment.name] = batchRelayerDeployment;
+  // contractDeploymentCollection[mainnetGaugeDeployment.name] = mainnetGaugeDeployment;
+  // contractDeploymentCollection[mainnetGaugeFactoryDeployment.name] = mainnetGaugeFactoryDeployment;
+  // contractDeploymentCollection[tokenholderFactoryDeployment.name] = tokenholderFactoryDeployment;
+  // contractDeploymentCollection[bribeVaultDeployment.name] = bribeVaultDeployment;
+  // contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
+  // contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
+  // contractDeploymentCollection[gaugeControllerQuerierDeployment.name] = gaugeControllerQuerierDeployment;
 
   return contractDeploymentCollection;
 };

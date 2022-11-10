@@ -13,8 +13,8 @@ import {
 
 import {
   EtherscanURLs,
-  getEtherscanEndpoints,
   retrieveContractBytecode,
+  getEtherscanEndpoints,
 } from '@nomiclabs/hardhat-etherscan/dist/src/network/prober';
 
 import {
@@ -56,7 +56,7 @@ export default class Verifier {
     const response = await this.verify(task, name, address, constructorArguments, libraries);
 
     if (response.isVerificationSuccess()) {
-      const etherscanAPIEndpoints = await getEtherscanEndpoints(this.network.provider, this.network.name);
+      const etherscanAPIEndpoints = await this.getNetworkEndpoints();
       const contractURL = new URL(`/address/${address}#code`, etherscanAPIEndpoints.browserURL);
       return contractURL.toString();
     } else if (intent < MAX_VERIFICATION_INTENTS && response.isBytecodeMissingInNetworkError()) {
@@ -100,8 +100,7 @@ export default class Verifier {
           );
 
     const solcFullVersion = await getLongVersion(contractInformation.solcVersion);
-    const etherscanAPIEndpoints = await getEtherscanEndpoints(this.network.provider, this.network.name);
-
+    const etherscanAPIEndpoints = await this.getNetworkEndpoints();
     const verificationStatus = await this.attemptVerification(
       etherscanAPIEndpoints,
       contractInformation,
@@ -247,5 +246,27 @@ export default class Verifier {
     });
 
     return previousSourceNames;
+  }
+
+  private async getNetworkEndpoints(): Promise<EtherscanURLs> {
+    let etherscanAPIEndpoints: EtherscanURLs;
+    switch (parseInt(await this.network.provider.send('eth_chainId'), 16)) {
+      case 1313161554:
+        etherscanAPIEndpoints = {
+          apiURL: 'https://api.aurorascan.dev/api',
+          browserURL: 'https://aurorascan.dev/',
+        };
+        break;
+      case 1313161555:
+        etherscanAPIEndpoints = {
+          apiURL: 'https://api-testnet.aurorascan.dev/api',
+          browserURL: 'https://testnet.aurorascan.dev/',
+        };
+        break;
+      default:
+        etherscanAPIEndpoints = await getEtherscanEndpoints(this.network.provider, this.network.name);
+    }
+
+    return etherscanAPIEndpoints;
   }
 }

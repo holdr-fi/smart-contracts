@@ -7,7 +7,7 @@ import { ContractDeployment } from '../../types';
 // TO-DO Work out initial supply and emission dynamics
 export const deployTestToken = async function deployTestToken(force = false): Promise<ContractDeployment> {
   const contractName = 'TestBalancerToken';
-  const constructorArgs = [ADMIN, 'Solace Swap Governance Token', 'SWP'];
+  const constructorArgs = [ADMIN, 'Test Token', 'TEST'];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();

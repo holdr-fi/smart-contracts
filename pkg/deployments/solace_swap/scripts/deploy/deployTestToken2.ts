@@ -7,7 +7,7 @@ import { task, ethers } from '../../input';
 export const deployTestToken2 = async function deployTestToken2(force = false): Promise<ContractDeployment> {
   const artifactName = 'TestBalancerToken';
   const contractName = 'TestBalancerToken2';
-  const constructorArgs = [ADMIN, 'ETH', 'ETH'];
+  const constructorArgs = [ADMIN, 'Test Token 2', 'Test2'];
   let instance: Contract;
   const predeployedInstance = await getPredeployedInstanceForDuplicate(contractName, artifactName, task);
   const [deployer] = await ethers.getSigners();

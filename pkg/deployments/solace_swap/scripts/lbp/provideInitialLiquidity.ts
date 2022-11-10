@@ -1,11 +1,11 @@
 import { Contract, BigNumber } from 'ethers';
 import { JoinPoolRequest } from '@balancer-labs/balancer-js';
-const { defaultAbiCoder } = ethers.utils;
 import { WETH_ADDRESS, MAX_UINT256 } from '../../constants';
 import { ethers, logger } from '../../input';
 import { AssetHelpers } from '../../utils';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
+const { defaultAbiCoder } = ethers.utils;
 
 export const provideInitialLiquidity = async function provideInitialLiquidity(
   poolContract: Contract,

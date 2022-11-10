@@ -15,7 +15,8 @@ import { fp } from '@balancer-labs/v2-helpers/src/numbers';
 
 // MUMBAI
 export const ADMIN = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
-export const WETH_ADDRESS = '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'; // wMatic
+// export const WETH_ADDRESS = '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889'; // wMatic on MUMBAI
+export const WETH_ADDRESS = '0xC9BdeEd33CD01541e1eeD10f90519d2C06Fe3feB'; // wETH on NEAR
 export const WSTETH_ADDRESS = '';
 export const PAUSE_WINDOW_DURATION = 3 * MONTH;
 export const BUFFER_PERIOD_DURATION = MONTH;
