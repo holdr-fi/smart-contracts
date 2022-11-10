@@ -10,7 +10,7 @@ import { AssetHelpers, ONE_ETHER, ZERO } from '../../utils';
 import { WETH_ADDRESS, ONE_MILLION_ETHER } from '../../constants';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
 import LBP_ABI from '../../../tasks/2022xxxx-solace-swap/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
-import { provideInitialLiquidity, commenceLBP, verifyLBPPool } from './';
+import { provideInitialLiquidity, commenceLBP, verifyLBPPool } from '.';
 
 export const launchLBP = async function launchLBP(
   contractDeploymentCollection: ContractDeploymentCollection

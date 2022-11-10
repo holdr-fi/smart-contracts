@@ -1,9 +1,5 @@
 # <img src="../../logo.svg" alt="Balancer" height="128px">
 
-# Solace Fork
-
-`yarn solace-fork`
-
 # Balancer V2 Deployments
 
 [![NPM Package](https://img.shields.io/npm/v/@balancer-labs/v2-deployments.svg)](https://www.npmjs.org/package/@balancer-labs/v2-deployments)

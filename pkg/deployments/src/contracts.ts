@@ -2,7 +2,7 @@ import { Contract, utils } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { getSigner } from './signers';
 import { Artifact, Libraries, Param } from './types';
-import { MAX_FEE } from '../solace_swap/constants/gasValues';
+import { MAX_FEE } from '../holdr/constants/gasValues';
 
 export async function deploy(
   artifact: Artifact,

@@ -1,6 +1,6 @@
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
-import { config } from './solace_swap/config/hardhat.config';
+import { config } from './holdr/config/hardhat.config';
 // import 'hardhat-local-networks-config-plugin';
 
 import '@balancer-labs/v2-common/setupTests';
