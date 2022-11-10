@@ -4,7 +4,7 @@
 import * as dotenv from 'dotenv';
 import { logger } from '../input';
 import axios from 'axios';
-import build from '../../tasks/2022xxxx-solace-swap/build-info/WeightedPoolFactory.json';
+import build from '../../tasks/2022xxxx-holdr/build-info/WeightedPoolFactory.json';
 
 dotenv.config();
 

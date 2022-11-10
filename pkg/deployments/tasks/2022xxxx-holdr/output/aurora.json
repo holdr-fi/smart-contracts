@@ -1,0 +1,19 @@
+{
+  "Authorizer": "0x7324289860150109dD0a8ee307B875d0868CFCb4",
+  "timestamp": 1668067467092,
+  "HoldrGovernanceToken": "0x1aaee8F00D02fcdb10cF1F0caB651dC83318c7AA",
+  "TestBalancerToken": "0x87345740EE1d0260B8529FaA0541BD296650D989",
+  "TestBalancerToken2": "0x7a4137fC69d2460B52c0eb85BC1B9B6aE5e781f6",
+  "Vault": "0x364d44dFc31b3d7b607797B514348d57Ad0D784E",
+  "BalancerHelpers": "0x751BD585c36708127646FC74C56cC11fba3d5cfB",
+  "BalancerQueries": "0xaC2EE227b64dFD89F2Ec91a68346158000Df3B30",
+  "ProtocolFeePercentagesProvider": "0x90dC08c4474D3Ea36bF4e65589D83c54C3A44395",
+  "WeightedPoolFactory": "0xDD1591D7BdF0E3ddEa4b4377cf03373700BED38e",
+  "NoProtocolFeeLiquidityBootstrappingPoolFactory": "0x1001e599ff9079717E176f224de7f1a27eACD3C2",
+  "ComposableStablePoolFactory": "0xB2f941B85791e47FAa6391Cdef36A3BBaD19b73E",
+  "Multicall2": "0x819deBcc9526fc7f7CC316280c392642CD728C5C",
+  "WstETH": "0xb9181fEaDeaf6720Ef15644493BDcDfC07ac659b",
+  "ProtocolFeesCollector": "0x2a2ab182d913efD819b7dd099e57585B9d409342",
+  "AuthorizerAdaptor": "0xF657FC1ee31F3643924b46a4BB3f939678972869",
+  "BalancerTokenAdmin": "0x95c3f6B1001Fc46DcA5bc4041e74a4E5bF7D580f"
+}

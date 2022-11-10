@@ -6,10 +6,10 @@ import { ContractDeploymentCollection, CreateLBPParams } from '../../types';
 import { ethers, logger, task } from '../../input';
 import { Contract } from 'ethers';
 import { AssetHelpers, ONE_ETHER, ZERO } from '../../utils';
-// SOLACE TODO - swap out for wNEAR on production
+// HOLDR_TODO - swap out for wNEAR on production
 import { WETH_ADDRESS, ONE_MILLION_ETHER } from '../../constants';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
-import LBP_ABI from '../../../tasks/2022xxxx-solace-swap/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
+import LBP_ABI from '../../../tasks/2022xxxx-holdr/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
 import { provideInitialLiquidity, commenceLBP, verifyLBPPool } from '.';
 
 export const launchLBP = async function launchLBP(
@@ -18,7 +18,7 @@ export const launchLBP = async function launchLBP(
   const [deployer] = await ethers.getSigners();
   const lbpFactory = contractDeploymentCollection['NoProtocolFeeLiquidityBootstrappingPoolFactory'].instance;
   const hldr = contractDeploymentCollection['HoldrGovernanceToken'].instance;
-  // SOLACE TODO - swap out for wNEAR on production
+  // HOLDR_TODO - swap out for wNEAR on production
   const token1 = contractDeploymentCollection['TestBalancerToken2'].instance;
 
   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
@@ -54,13 +54,13 @@ export const launchLBP = async function launchLBP(
 
   if ((await hldr.balanceOf(deployer.address)).eq(ZERO)) {
     logger.info('Minting self 35M HLDR tokens');
-    // SOLACE TODO - Do we need to change mint number?
+    // HOLDR_TODO - Do we need to change mint number?
     await hldr.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
   }
 
   if ((await token1.balanceOf(deployer.address)).lt(ONE_MILLION_ETHER)) {
     logger.info('Minting self 35M ETH tokens');
-    // SOLACE TODO - Do we need to change mint number?
+    // HOLDR_TODO - Do we need to change mint number?
     await token1.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
   }
 

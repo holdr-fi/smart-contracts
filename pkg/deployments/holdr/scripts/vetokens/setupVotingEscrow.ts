@@ -5,7 +5,7 @@ import { VotingEscrowDeploymentHelper, solidityRequire } from '../../utils';
 import { constants } from 'ethers';
 const { HashZero } = constants;
 import { ContractDeploymentCollection } from '../../types';
-import LiquidityGaugeV5ABI from '../../../tasks/2022xxxx-solace-swap/abi/LiquidityGaugeV5.json';
+import LiquidityGaugeV5ABI from '../../../tasks/2022xxxx-holdr/abi/LiquidityGaugeV5.json';
 
 export const setupVotingEscrow = async function setupVotingEscrow(
   contractDeploymentCollection: ContractDeploymentCollection
@@ -187,7 +187,7 @@ export const setupVotingEscrow = async function setupVotingEscrow(
       await helper.revokeRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addGaugeFactory');
     }
 
-    // SOLACE TODO - Config for non-core pool/gauge
+    // HOLDR_TODO - Config for non-core pool/gauge
     if (output['RND0Gauge'] === undefined) {
       logger.info('Creating new liquidity gauge for RND0-ETH pool and adding to GaugeController');
       await helper.grantRole(deployer.address, gaugeAdder, gaugeAdder.interface, 'addEthereumGauge');

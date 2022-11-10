@@ -5,7 +5,7 @@ import { ContractDeploymentCollection } from '../../types';
 import { ethers, logger, task } from '../../input';
 import { getCurrentTimestamp } from '../../utils';
 import { Contract } from 'ethers';
-import GaugeABI from '../../../tasks/2022xxxx-solace-swap/abi/LiquidityGaugeV5.json';
+import GaugeABI from '../../../tasks/2022xxxx-holdr/abi/LiquidityGaugeV5.json';
 const { solidityKeccak256 } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 

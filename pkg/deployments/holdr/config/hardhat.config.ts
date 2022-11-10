@@ -38,7 +38,7 @@ export const config: HardhatUserConfig = {
     timeout: 600000,
   },
   paths: {
-    sources: './solace_swap/contracts',
+    sources: './holdr/contracts',
     tests: './test',
     cache: './cache',
     artifacts: './artifacts',

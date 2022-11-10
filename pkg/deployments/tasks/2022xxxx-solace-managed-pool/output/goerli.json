@@ -1,8 +1,0 @@
-{
-  "TimelockAuthorizer": "0x86aAC7a3cEa476769cbe6CBb04B2eE7A29560250",
-  "timestamp": 1653896953509,
-  "Vault": "0x1Bee13139Ef9A5E1301f83Ca90d09C5289Ce3FC2",
-  "BalancerHelpers": "0x8598bcc3B5A24f9adE57c00681Fcbb49c8B7dA8b",
-  "BaseManagedPoolFactory": "0xEF7dd30092D812068047109e55DeF88b74522187",
-  "ManagedPoolFactory": "0x3Ef2B76449828dF079e29df5Bb7Eb51A39dAf46C"
-}

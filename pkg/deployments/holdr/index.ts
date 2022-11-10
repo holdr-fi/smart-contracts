@@ -1,6 +1,6 @@
 import {
-  deploySolaceSwapContracts,
-  verifySolaceSwapContracts,
+  deployHoldrContracts,
+  verifyHoldrContracts,
   setupVotingEscrowSystem,
   setupBribingSystem,
   updateBribes,
@@ -19,8 +19,8 @@ async function main() {
   //   '0000000000000000000000007e5d79d67a1dac16e8024b99c4b8a8ec37c5ea2b0000000000000000000000008ba291aae44b95939cedcf6a5c379af64f7600fc'
   // );
 
-  const contractDeploymentCollection: ContractDeploymentCollection = await deploySolaceSwapContracts();
-  await verifySolaceSwapContracts(contractDeploymentCollection, true);
+  const contractDeploymentCollection: ContractDeploymentCollection = await deployHoldrContracts();
+  await verifyHoldrContracts(contractDeploymentCollection, true);
   // await setupVotingEscrowSystem(contractDeploymentCollection);
   // await setupBribingSystem(contractDeploymentCollection);
   // await updateBribes(contractDeploymentCollection);

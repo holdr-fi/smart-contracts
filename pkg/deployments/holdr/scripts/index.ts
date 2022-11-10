@@ -1,5 +1,5 @@
-export * from './deploySolaceSwapContracts';
-export * from './verifySolaceSwapContracts';
+export * from './deployHoldrContracts';
+export * from './verifyHoldrContracts';
 export * from './setupVotingEscrowSystem';
 export * from './setupBribingSystem';
 export * from './setupLBP';

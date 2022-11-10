@@ -1,7 +1,7 @@
 import { Contract, BigNumber } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
-import LBP_ABI from '../../../tasks/2022xxxx-solace-swap/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
+import LBP_ABI from '../../../tasks/2022xxxx-holdr/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
 import { DAY } from '@balancer-labs/v2-helpers/src/time';
 
 export const commenceLBP = async function commenceLBP(
@@ -11,7 +11,7 @@ export const commenceLBP = async function commenceLBP(
 ): Promise<void> {
   const poolInstance = new Contract(poolAddress, LBP_ABI, provider);
   const currentTime = Math.floor(Date.now() / 1000);
-  // SOLACE TODO - Adjust params here
+  // HOLDR_TODO - Adjust params here
   // Setup 3 DAY LBP, starting in 24 hours.
   // 98/2 => 10/90
   await poolInstance.connect(provider).updateWeightsGradually(

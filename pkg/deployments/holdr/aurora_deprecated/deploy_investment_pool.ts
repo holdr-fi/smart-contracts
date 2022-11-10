@@ -19,16 +19,16 @@ import {
   ONE_ETHER,
 } from '../utils';
 import { BigNumber as BN, Contract } from 'ethers';
-import InvestmentPoolABI from '../../tasks/2022xxxx-solace-investment-pool/abi/InvestmentPool.json';
-import BatchRelayerLibraryABI from '../../tasks/2022xxxx-solace-investment-pool/abi/BatchRelayerLibrary.json';
+import InvestmentPoolABI from '../../tasks/2022xxxx-investment-pool/abi/InvestmentPool.json';
+import BatchRelayerLibraryABI from '../../tasks/2022xxxx-investment-pool/abi/BatchRelayerLibrary.json';
 const { ethers } = hardhat;
 
 // Config
 dotenv_config();
 Logger.setDefaults(false, true); // (silent: true, verbose: false)
 const verifier = process.env.AURORASCAN_API_KEY ? new Verifier(hre.network, process.env.AURORASCAN_API_KEY) : undefined;
-const TASK_ID = '2022xxxx-solace-investment-pool';
-// const TASK_ID = '20210418-weighted-pool'; // Unable to verify WeightedPoolFactory with TASK_ID = '2022xxxx-solace-investment-pool'
+const TASK_ID = '2022xxxx-investment-pool';
+// const TASK_ID = '20210418-weighted-pool'; // Unable to verify WeightedPoolFactory with TASK_ID = '2022xxxx-investment-pool'
 // for some mysterious reason, even though ABIs and build files are copy-pasted from '20210418-weighted-pool'
 const task = new Task(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
@@ -50,17 +50,6 @@ const TOKEN_ADDRESS: { [token: string]: { address: string; weight: BN } } = {
   ['weth']: { address: '0x8cacba163be8070760f6ddada7461a558519a9f1', weight: ONE_HUNDRED_PERCENT.div(4) },
   ['wbtc']: { address: '0x6d80dc92e4599adbae3e4797ebe79c29d0f4c344', weight: ONE_HUNDRED_PERCENT.div(4) },
 };
-
-// Rinkeby values
-// const TOKEN_ADDRESS: { [token: string]: { address: string; weight: BN } } = {
-//   ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', weight: ONE_HUNDRED_PERCENT.div(4) },
-//   ['solace']: {
-//     address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
-//     weight: ONE_HUNDRED_PERCENT.div(4),
-//   },
-//   ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', weight: ONE_HUNDRED_PERCENT.div(4) },
-//   ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', weight: ONE_HUNDRED_PERCENT.div(4) },
-// };
 
 // Types
 let newPoolParams: NewInvestmentPoolParams;
@@ -306,7 +295,7 @@ async function main() {
     [tokens, weights] = assetHelpers.sortTokens(tokens, weights);
 
     newPoolParams = {
-      name: 'Solace Managed Pool', // OK
+      name: 'Holdr Managed Pool', // OK
       symbol: 'SMP', // OK
       tokens: tokens,
       weights: weights,

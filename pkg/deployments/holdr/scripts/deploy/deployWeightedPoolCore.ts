@@ -10,7 +10,7 @@ import {
   SWAP_FEE,
   WETH_ADDRESS,
 } from '../../constants';
-import WeightedPoolABI from '../../../tasks/2022xxxx-solace-swap/abi/WeightedPool.json';
+import WeightedPoolABI from '../../../tasks/2022xxxx-holdr/abi/WeightedPool.json';
 import { AssetHelpers } from '../../utils';
 
 export const deployWeightedPoolCore = async function deployWeightedPoolCore(

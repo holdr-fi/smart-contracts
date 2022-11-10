@@ -1,7 +1,7 @@
 import { BigNumberish, Contract, utils } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
-import BALTokenHolderABI from '../../tasks/2022xxxx-solace-swap/abi/BALTokenHolder.json';
-import SingleRecipientGaugeABI from '../../tasks/2022xxxx-solace-swap/abi/SingleRecipientGauge.json';
+import BALTokenHolderABI from '../../tasks/2022xxxx-holdr/abi/BALTokenHolder.json';
+import SingleRecipientGaugeABI from '../../tasks/2022xxxx-holdr/abi/SingleRecipientGauge.json';
 import Task from '../../src/task';
 import { ZERO_ADDRESS } from '../constants';
 

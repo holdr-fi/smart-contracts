@@ -1,7 +1,7 @@
 import { config as dotenv_config } from 'dotenv';
 import ERC20_ABI from '../constants/abis/ERC20.json';
-import VAULT_ABI from '../../tasks/2022xxxx-solace-investment-pool/abi/Vault.json';
-import INVESTMENT_POOL_ABI from '../../tasks/2022xxxx-solace-investment-pool/abi/InvestmentPool.json';
+import VAULT_ABI from '../../tasks/2022xxxx-investment-pool/abi/Vault.json';
+import INVESTMENT_POOL_ABI from '../../tasks/2022xxxx-investment-pool/abi/InvestmentPool.json';
 import { ethers, BigNumber as BN } from 'ethers';
 import { JoinPoolRequest, SingleSwap, FundManagement } from '@balancer-labs/balancer-js';
 import { ONE_HUNDRED_PERCENT, AssetHelpers, ONE_ETHER, ZERO } from '../utils';
@@ -13,16 +13,6 @@ const WETH_ADDRESS = '0x8cacba163be8070760f6ddada7461a558519a9f1';
 const INVESTMENT_POOL_ADDRESS = '0x6fF82f9C6E4e64150410c484632746bD0BE30bAC';
 const VAULT_ADDRESS = '0x39526464ac81f75009a8c1e425f2340e7f1ddfd4';
 const USER = '0xC32e0d89e25222ABb4d2d68755baBF5aA6648F15';
-
-// const TOKENS: { [token: string]: { address: string; amount: BN } } = {
-//   ['solace']: {
-//     address: '0x501acE9c35E60f03A2af4d484f49F9B1EFde9f40',
-//     amount: ONE_ETHER.mul(20),
-//   },
-//   ['frax']: { address: '0x86E5B6485e28E52a0dEEd28Cc10772FeB9c4C400', amount: ONE_ETHER.mul(20) },
-//   ['weth']: { address: '0xc778417E063141139Fce010982780140Aa0cD5Ab', amount: ONE_ETHER.mul(20) },
-//   ['dai']: { address: '0xE28bEf39f41c63B66cFD97BFfDB6Defc915B3C88', amount: ONE_ETHER.mul(20) },
-// };
 
 const TOKENS: { [token: string]: { address: string; amount: BN } } = {
   ['usdt']: { address: '0x3D9d7843B3da0E95429BaD2B5165C5B13269F386', amount: ONE_ETHER.mul(100) },
@@ -55,8 +45,8 @@ async function swap() {
   const singleswap: SingleSwap = {
     poolId: poolId,
     kind: 0, // GIVEN_IN
-    assetIn: TOKENS['frax'].address,
-    assetOut: TOKENS['solace'].address,
+    assetIn: TOKENS['usdt'].address,
+    assetOut: TOKENS['aurora'].address,
     amount: ONE_ETHER.div(40), // Send in 50 FRAX
     userData: '0x',
   };

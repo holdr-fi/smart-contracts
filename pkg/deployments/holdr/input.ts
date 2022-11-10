@@ -11,7 +11,7 @@ dotenv_config();
 // (silent: true, verbose: false)
 Logger.setDefaults(false, true);
 const verifier = process.env.AURORASCAN_API_KEY ? new Verifier(hre.network, process.env.AURORASCAN_API_KEY) : undefined;
-const TASK_ID = '2022xxxx-solace-swap';
+const TASK_ID = '2022xxxx-holdr';
 const task = new TaskExtension(TASK_ID, TaskMode.LIVE, hre.network.name, verifier);
 
 const createNewTask = function (createNewTasktaskID: string): Task {
