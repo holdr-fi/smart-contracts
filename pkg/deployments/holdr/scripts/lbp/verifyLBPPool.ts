@@ -1,3 +1,6 @@
+// Example of verified contract.
+// https://etherscan.io/address/0x34809aEDF93066b49F638562c42A9751eDb36DF5#code
+
 import { ContractDeploymentCollection, CreateLBPParams, LBPPoolConstructorParams } from '../../types';
 import { task } from '../../input';
 

@@ -36,39 +36,41 @@ export const launchLBP = async function launchLBP(
     swapEnabledOnStart: true,
   };
 
+  console.log(await lbpFactory.populateTransaction.create(...Object.values(createLBPParams)));
+
   // Launch pool
-  const output = task.output({ ensure: false });
-  if (output['NoProtocolFeeLiquidityBootstrappingPool'] === undefined) {
-    logger.info('Creating LBP pool');
-    const tx = await lbpFactory.connect(deployer).create(...Object.values(createLBPParams));
-    const log = await tx.wait();
-    const poolAddress = log?.events[5].args[0];
-    task.save({ ['NoProtocolFeeLiquidityBootstrappingPool']: poolAddress });
-    await verifyLBPPool(contractDeploymentCollection, createLBPParams, deployer.address, poolAddress);
-    logger.info('Launching LBP');
-    await commenceLBP(poolAddress, deployer, sortedWeights);
-  }
+  // const output = task.output({ ensure: false });
+  // if (output['NoProtocolFeeLiquidityBootstrappingPool'] === undefined) {
+  //   logger.info('Creating LBP pool');
+  //   const tx = await lbpFactory.connect(deployer).create(...Object.values(createLBPParams));
+  //   const log = await tx.wait();
+  //   const poolAddress = log?.events[5].args[0];
+  //   task.save({ ['NoProtocolFeeLiquidityBootstrappingPool']: poolAddress });
+  //   await verifyLBPPool(contractDeploymentCollection, createLBPParams, deployer.address, poolAddress);
+  //   logger.info('Launching LBP');
+  //   await commenceLBP(poolAddress, deployer, sortedWeights);
+  // }
 
-  // Mint self 35M HLDR
-  const vault = contractDeploymentCollection['Vault'].instance;
+  // // Mint self 35M HLDR
+  // const vault = contractDeploymentCollection['Vault'].instance;
 
-  if ((await hldr.balanceOf(deployer.address)).eq(ZERO)) {
-    logger.info('Minting self 35M HLDR tokens');
-    // HOLDR_TODO - Do we need to change mint number?
-    await hldr.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
-  }
+  // if ((await hldr.balanceOf(deployer.address)).eq(ZERO)) {
+  //   logger.info('Minting self 35M HLDR tokens');
+  //   // HOLDR_TODO - Do we need to change mint number?
+  //   await hldr.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
+  // }
 
-  if ((await token1.balanceOf(deployer.address)).lt(ONE_MILLION_ETHER)) {
-    logger.info('Minting self 35M ETH tokens');
-    // HOLDR_TODO - Do we need to change mint number?
-    await token1.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
-  }
+  // if ((await token1.balanceOf(deployer.address)).lt(ONE_MILLION_ETHER)) {
+  //   logger.info('Minting self 35M ETH tokens');
+  //   // HOLDR_TODO - Do we need to change mint number?
+  //   await token1.connect(deployer).mint(deployer.address, ONE_MILLION_ETHER.mul(35));
+  // }
 
-  // Launch initial liquidity
-  const poolInstance = new Contract(output['NoProtocolFeeLiquidityBootstrappingPool'], LBP_ABI, deployer);
-  if ((await poolInstance.balanceOf(deployer.address)).eq(ZERO)) {
-    await provideInitialLiquidity(poolInstance, vault, hldr, token1, ONE_ETHER.mul(100000), deployer);
-  }
+  // // Launch initial liquidity
+  // const poolInstance = new Contract(output['NoProtocolFeeLiquidityBootstrappingPool'], LBP_ABI, deployer);
+  // if ((await poolInstance.balanceOf(deployer.address)).eq(ZERO)) {
+  //   await provideInitialLiquidity(poolInstance, vault, hldr, token1, ONE_ETHER.mul(100000), deployer);
+  // }
 
   // Let people swap
   // Exit pool

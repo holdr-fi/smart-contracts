@@ -4,3 +4,4 @@ export * from './setupVotingEscrowSystem';
 export * from './setupBribingSystem';
 export * from './setupLBP';
 export * from './updateBribes';
+export * from './multisig';

@@ -16,7 +16,7 @@ export const commenceLBP = async function commenceLBP(
   // 98/2 => 10/90
   await poolInstance.connect(provider).updateWeightsGradually(
     currentTime + 300,
-    currentTime + 300 * 3 * DAY,
+    currentTime + 300 * 3 + DAY,
     sortedWeights.map((weight) => {
       if (weight.eq(fp(0.02))) {
         return fp(0.9);
