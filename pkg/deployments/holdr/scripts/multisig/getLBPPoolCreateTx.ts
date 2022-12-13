@@ -16,6 +16,8 @@ export const getLBPPoolCreateTx = async function getLBPPoolCreateTx(
   const sortedTokens = tokens[0];
   const sortedWeights = tokens[1];
 
+  console.log('sortedWeights: ', sortedWeights);
+
   const createLBPParams: CreateLBPParams = {
     name: 'HLDR->USDC Auction Pool',
     symbol: 'apHLDR-USDC',
@@ -25,6 +27,8 @@ export const getLBPPoolCreateTx = async function getLBPPoolCreateTx(
     owner: ADMIN_ADDRESS,
     swapEnabledOnStart: true,
   };
+
+  console.log('createLBPParams: ', createLBPParams);
 
   console.log(await factory.populateTransaction.create(...Object.values(createLBPParams)));
 };

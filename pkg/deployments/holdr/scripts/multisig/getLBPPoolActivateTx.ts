@@ -13,12 +13,11 @@ export const getLBPPoolActivateTx = async function getLBPPoolActivateTx(
 ): Promise<void> {
   console.log('Activate LBP pool params: ');
   const pool = new Contract(POOL_ADDRESS, LBP_ABI, provider);
-  const currentTime = Math.floor(Date.now() / 1000);
   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
   const tokens = assetHelpers.sortTokens([HLDR_ADDRESS, USDC_ADDRESS], [fp(0.1), fp(0.9)]);
   const endWeights = tokens[1];
 
-  console.log(
-    await pool.populateTransaction.updateWeightsGradually(currentTime + 300, currentTime + 300 * 2 + DAY, endWeights)
-  );
+  console.log(endWeights);
+
+  console.log(await pool.populateTransaction.updateWeightsGradually(1671024600, 1671199200, endWeights));
 };

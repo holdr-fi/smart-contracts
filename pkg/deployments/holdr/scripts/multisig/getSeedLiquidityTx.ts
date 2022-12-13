@@ -16,11 +16,6 @@ export const getSeedLiquidityTx = async function getSeedLiquidityTx(
 ): Promise<void> {
   console.log('Seed initial liquidity params: ');
   const pool = new Contract(POOL_ADDRESS, LBP_ABI, provider);
-  const hldr = new Contract(HLDR_ADDRESS, ERC20_ABI, provider);
-  const usdc = new Contract(USDC_ADDRESS, ERC20_ABI, provider);
-
-  console.log('Approve HLDR params: ', await hldr.populateTransaction.approve(vault.address, MAX_UINT256));
-  console.log('Approve USDC params: ', await usdc.populateTransaction.approve(vault.address, MAX_UINT256));
 
   const poolId = await pool.getPoolId();
   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
@@ -47,3 +42,5 @@ export const getSeedLiquidityTx = async function getSeedLiquidityTx(
     await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
   );
 };
+
+0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a
