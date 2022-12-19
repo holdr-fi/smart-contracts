@@ -1,10 +1,5 @@
 import { ContractDeploymentCollection } from '../../types';
-import { getMintHLDRTx } from './getMintHLDRTx';
-import { getLBPPoolCreateTx } from './getLBPPoolCreateTx';
-import { getLBPPoolActivateTx } from './getLBPPoolActivateTx';
-import { getSeedLiquidityTx } from './getSeedLiquidityTx';
-import { getWithdrawLiquidityTx } from './getWithdrawLiquidityTx';
-import { createInitialPoolsTx } from './createInitialPoolsTx';
+import { createInitialPoolsTx, seedInitialLiquidityTx } from './veHLDR';
 
 export const getMultiSigTx = async function getMultiSigTx(
   contractDeploymentCollection: ContractDeploymentCollection
@@ -17,10 +12,5 @@ export const getMultiSigTx = async function getMultiSigTx(
   const vault = contractDeploymentCollection['Vault'].instance;
   const factory = contractDeploymentCollection['NoProtocolFeeLiquidityBootstrappingPoolFactory'].instance;
 
-  // await getMintHLDRTx(hldr, ADMIN_ADDRESS);
-  // await getLBPPoolCreateTx(factory, ADMIN_ADDRESS, hldr.address, USDC_ADDRESS);
-  // await getLBPPoolActivateTx(POOL_ADDRESS, hldr.address, USDC_ADDRESS, hldr.provider);
-  // await getSeedLiquidityTx(vault, ADMIN_ADDRESS, POOL_ADDRESS, hldr.address, USDC_ADDRESS, hldr.provider);
-  // await getWithdrawLiquidityTx(vault, ADMIN_ADDRESS, POOL_ADDRESS, hldr.address, USDC_ADDRESS, hldr.provider);
-  await createInitialPoolsTx(contractDeploymentCollection, ADMIN_ADDRESS);
+  await seedInitialLiquidityTx(contractDeploymentCollection, ADMIN_ADDRESS, vault.provider);
 };

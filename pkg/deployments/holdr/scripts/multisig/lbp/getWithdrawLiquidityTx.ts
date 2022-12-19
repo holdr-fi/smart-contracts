@@ -22,6 +22,7 @@ export const getWithdrawLiquidityTx = async function getWithdrawLiquidityTx(
   const sortedTokens = tokens[0];
   const minAmountsOut = tokens[1];
   const BPT_BALANCE = await pool.balanceOf(ADMIN_ADDRESS);
+  console.log('BPT_BALANCE - ', BPT_BALANCE.toString());
 
   const ExitKind = 1;
   const abi = ['uint256', 'uint256'];
@@ -35,8 +36,10 @@ export const getWithdrawLiquidityTx = async function getWithdrawLiquidityTx(
     toInternalBalance: false,
   };
 
+  console.log('exitPoolRequest: ', exitPoolRequest);
+
   console.log(
     'Seed initial LBP liquidity parameter: ',
-    await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, exitPoolRequest)
+    await vault.populateTransaction.exitPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, exitPoolRequest)
   );
 };

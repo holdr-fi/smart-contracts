@@ -1,8 +1,8 @@
 import { Contract, providers } from 'ethers';
-import { AssetHelpers } from '../../utils';
+import { AssetHelpers } from '../../../utils';
 import { fp } from '@balancer-labs/v2-helpers/src/numbers';
-import { WETH_ADDRESS } from '../../constants';
-import LBP_ABI from '../../../tasks/2022xxxx-holdr/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
+import { WETH_ADDRESS } from '../../../constants';
+import LBP_ABI from '../../../../tasks/2022xxxx-holdr/abi/NoProtocolFeeLiquidityBootstrappingPool.json';
 import { DAY } from '@balancer-labs/v2-helpers/src/time';
 
 export const getLBPPoolActivateTx = async function getLBPPoolActivateTx(
