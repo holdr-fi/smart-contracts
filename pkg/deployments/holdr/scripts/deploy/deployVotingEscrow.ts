@@ -9,7 +9,6 @@ export const deployVotingEscrow = async function deployVotingEscrow(
 ): Promise<ContractDeployment> {
   const output = task.output({ ensure: false });
   const contractName = 'VotingEscrow';
-  // const constructorArgs = [output['SPT'], 'Vote Escrowed SPT', 'veSWP', authorizerAdaptorAddress];
   const constructorArgs = [output['HPT'], 'Vote Escrowed HPT', 'veHLDR', authorizerAdaptorAddress];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);

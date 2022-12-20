@@ -1,6 +1,6 @@
 {
   "Authorizer": "0x7324289860150109dD0a8ee307B875d0868CFCb4",
-  "timestamp": 1668067467092,
+  "timestamp": 1671523165953,
   "HoldrGovernanceToken": "0x1aaee8F00D02fcdb10cF1F0caB651dC83318c7AA",
   "TestBalancerToken": "0x87345740EE1d0260B8529FaA0541BD296650D989",
   "TestBalancerToken2": "0x7a4137fC69d2460B52c0eb85BC1B9B6aE5e781f6",
@@ -15,5 +15,20 @@
   "WstETH": "0xb9181fEaDeaf6720Ef15644493BDcDfC07ac659b",
   "ProtocolFeesCollector": "0x2a2ab182d913efD819b7dd099e57585B9d409342",
   "AuthorizerAdaptor": "0xF657FC1ee31F3643924b46a4BB3f939678972869",
-  "BalancerTokenAdmin": "0x95c3f6B1001Fc46DcA5bc4041e74a4E5bF7D580f"
+  "BalancerTokenAdmin": "0x95c3f6B1001Fc46DcA5bc4041e74a4E5bF7D580f",
+  "HPT": "0x190185164382D388ef829a3Ad67998Ab5792EeA3",
+  "VotingEscrow": "0x5ed1e3D53AfdB0d0bc8661e056dffCD51c95bb9D",
+  "GaugeController": "0x2B69fc5903B3a9eFeBF88ff23A90B229A9791674",
+  "GaugeAdder": "0x667514327595C611F3AEdd0B28f48a1d0aa26f79",
+  "BalancerMinter": "0xe7678E32B6d9610CfB63A18091cD00c4A3b029B9",
+  "SingleRecipientGaugeFactory": "0xb8759b026e801937f39B73a82Aa848bF03540493",
+  "VotingEscrowDelegation": "0x0FFf9f3044244048802B5AB4540e2014d1C0688A",
+  "VotingEscrowDelegationProxy": "0xB0b7387dFb2b086596FF75e05aC5D4846590e412",
+  "BatchRelayerLibrary": "0x47f5b3B252224B14247F514bAaf4594896e7a307",
+  "LiquidityGaugeV5": "0x6Ad4aa297b789134fEa8EdE9E87AFfc51A2fFb85",
+  "LiquidityGaugeFactory": "0x868655EC4230fF619e1d484fc51e97b5887694d1",
+  "BALTokenHolderFactory": "0xe04F421e4D05e0f57e79e0a6EFcB357aD6Eb0bEe",
+  "GaugeControllerQuerier": "0xeaA4620EcfEeD4cfb2A9aBa02e55C3Ef4465bb47",
+  "SingleRecipientGauge": "0xa7Ea4762911FCb93276C6bc4C3Dfb71a02Ba6910",
+  "BalancerRelayer": "0xf5e5465Ade4aa0F29eC08c29Cd6C96C859B50c4b"
 }

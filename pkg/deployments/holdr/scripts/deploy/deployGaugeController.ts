@@ -3,12 +3,12 @@ import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 
 export const deployGaugeController = async function deployGaugeController(
-  veTokenDeploymentAddress: string,
+  votingEscrowDeploymentAddress: string,
   authorizerAdaptorDeploymentAddress: string,
   force = false
 ): Promise<ContractDeployment> {
   const contractName = 'GaugeController';
-  const constructorArgs = [veTokenDeploymentAddress, authorizerAdaptorDeploymentAddress];
+  const constructorArgs = [votingEscrowDeploymentAddress, authorizerAdaptorDeploymentAddress];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();

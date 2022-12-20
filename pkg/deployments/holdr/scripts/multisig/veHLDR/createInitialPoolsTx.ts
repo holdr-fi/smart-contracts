@@ -42,11 +42,11 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   //   await weightedPoolFactory.populateTransaction.create(...Object.values(hldr_wnear_create_params))
   // );
 
-  // // 2. USDC/USDT
+  // 2. USDC/USDT
 
-  // // Use as example - https://etherscan.io/tx/0xa46ab001ffb9449792d5b959e8c973168a812cbe70fc30ae8f08a14cc9275fd9
+  // Use as example - https://etherscan.io/tx/0xa46ab001ffb9449792d5b959e8c973168a812cbe70fc30ae8f08a14cc9275fd9
 
-  // // Need to wrap Flux or Pythnet Oracle contracts
+  // Need to wrap Flux or Pythnet Oracle contracts
 
   // const usdt_usdc_create_params: NewStablePoolParams = {
   //   name: 'Holdr USDT USDC Stable Pool',
@@ -121,20 +121,20 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
 
   // 6. wNEAR/AURORA
 
-  // const wnear_aurora_create_params: NewWeightedPoolParams = {
-  //   name: 'Holdr 80 wNEAR 20 AURORA',
-  //   symbol: '80wNEAR-20AURORA',
-  //   tokens: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[0],
-  //   normalizedWeights: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[1],
-  //   rateProviders: [ZERO_ADDRESS, ZERO_ADDRESS],
-  //   swapFeePercentage: fp(0.003),
-  //   owner: ADMIN_ADDRESS,
-  // };
+  const wnear_aurora_create_params: NewWeightedPoolParams = {
+    name: 'Holdr 80 wNEAR 20 AURORA',
+    symbol: '80wNEAR-20AURORA',
+    tokens: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[0],
+    normalizedWeights: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[1],
+    rateProviders: [ZERO_ADDRESS, ZERO_ADDRESS],
+    swapFeePercentage: fp(0.003),
+    owner: ADMIN_ADDRESS,
+  };
 
-  // console.log(
-  //   '80wNEAR-20AURORA: ',
-  //   await weightedPoolFactory.populateTransaction.create(...Object.values(wnear_aurora_create_params))
-  // );
+  console.log(
+    '80wNEAR-20AURORA: ',
+    await weightedPoolFactory.populateTransaction.create(...Object.values(wnear_aurora_create_params))
+  );
 
   // 7. HLDR50-USDC25-WETH25
 
@@ -178,11 +178,4 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   //   '25AURORA-25BSTN-25PLY-25TRI: ',
   //   await weightedPoolFactory.populateTransaction.create(...Object.values(aurora_bstn_ply_tri_create_params))
   // );
-
-  console.log(
-    await contractDeploymentCollection['HoldrGovernanceToken'].instance.populateTransaction.approve(
-      vault.address,
-      MAX_UINT256
-    )
-  );
 };

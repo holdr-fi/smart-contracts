@@ -20,7 +20,7 @@ export * from './deployVotingEscrowDelegation';
 export * from './deployVotingEscrowDelegationProxy';
 export * from './deployFeeDistributor';
 export * from './deployWstETH';
-export * from './deployBatchRelayer';
+export * from './deployBatchRelayerLibrary';
 export * from './deployMainnetGauge';
 export * from './deployMainnetGaugeFactory';
 export * from './deployTokenholderFactory';

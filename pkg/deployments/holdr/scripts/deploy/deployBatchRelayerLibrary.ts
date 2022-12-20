@@ -1,20 +1,15 @@
-import { WSTETH_ADDRESS } from '../../constants';
 import { Contract } from 'ethers';
 import { task, ethers } from '../../input';
 import { ContractDeployment } from '../../types';
 
-export const deployBatchRelayer = async function deployBatchRelayer(
+export const deployBatchRelayerLibrary = async function deployBatchRelayerLibrary(
   vaultDeploymentAddress: string,
+  WSTETHDeploymentAddress: string,
   tokenMinterDeploymentAddress: string,
   force = false
 ): Promise<ContractDeployment> {
-  const output = task.output({ ensure: false });
   const contractName = 'BatchRelayerLibrary';
-  const constructorArgs = [
-    vaultDeploymentAddress,
-    WSTETH_ADDRESS === '' ? output['WstETH'] : WSTETH_ADDRESS,
-    tokenMinterDeploymentAddress,
-  ];
+  const constructorArgs = [vaultDeploymentAddress, WSTETHDeploymentAddress, tokenMinterDeploymentAddress];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();

@@ -25,6 +25,7 @@ export const maxAUMValue = fp(0.5);
 // export const BPT_ADDRESS = '0xf8a0623ab66F985EfFc1C69D05F1af4BaDB01b00';
 export const SWAP_FEE = fp(0.001);
 export const THIRD_STAGE_DELAY = 600;
+export const DESIRED_FEE_STARTTIME = 1671624000; // Dec 21, 2022, 1200 UTC
 
 export const BRIBE_VAULT_FEE = 40000;
 export const BRIBE_VAULT_FEE_MAX = 100000;
