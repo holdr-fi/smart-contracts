@@ -14,5 +14,6 @@ export const ZERO = BN.from('0');
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 export const ONE_DAY = BN.from('86400');
 export const MAX_UINT256 = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+export const MULTISIG_ADDRESS = '0x432eb1f2730662ad1a9791ed34cb2dbdf7001555';
 
 export * from './constructorArgs';
