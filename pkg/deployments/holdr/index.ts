@@ -15,9 +15,9 @@ import { verifyContractFromMainnet } from './utils';
 async function main() {
   console.time('script_run_time');
   const contractDeploymentCollection: ContractDeploymentCollection = await deployHoldrContracts();
-  // await verifyHoldrContracts(contractDeploymentCollection, true);
+  await verifyHoldrContracts(contractDeploymentCollection, true);
 
-  await setupVotingEscrowSystem(contractDeploymentCollection);
+  // await setupVotingEscrowSystem(contractDeploymentCollection);
   // await setupBribingSystem(contractDeploymentCollection);
   // await updateBribes(contractDeploymentCollection);
   // await setupLBP(contractDeploymentCollection);

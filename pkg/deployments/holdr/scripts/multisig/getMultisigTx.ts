@@ -1,5 +1,5 @@
 import { ContractDeploymentCollection } from '../../types';
-import { createInitialPoolsTx, seedInitialLiquidityTx } from './veHLDR';
+import { createInitialPoolsTx, seedInitialLiquidityTx, getVeHLDR } from './veHLDR';
 
 export const getMultiSigTx = async function getMultiSigTx(
   contractDeploymentCollection: ContractDeploymentCollection
@@ -14,5 +14,6 @@ export const getMultiSigTx = async function getMultiSigTx(
   const factory = contractDeploymentCollection['NoProtocolFeeLiquidityBootstrappingPoolFactory'].instance;
 
   // await createInitialPoolsTx(contractDeploymentCollection, ADMIN_ADDRESS);
-  await seedInitialLiquidityTx(contractDeploymentCollection, ADMIN_ADDRESS, vault.provider);
+  // await seedInitialLiquidityTx(contractDeploymentCollection, ADMIN_ADDRESS, vault.provider);
+  await getVeHLDR(contractDeploymentCollection, ADMIN_ADDRESS, vault.provider);
 };

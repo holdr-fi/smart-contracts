@@ -63,7 +63,7 @@ export const verifyHoldrContracts = async function verifyHoldrContracts(
   // await verifyLiquidityGaugeFactory(contractDeploymentCollection['LiquidityGaugeFactory'], force);
   // await verifyTokenholderFactory(contractDeploymentCollection['BALTokenHolderFactory'], force);
   // await verifyGaugeControllerQuerier(contractDeploymentCollection['GaugeControllerQuerier'], force);
-  
+
   // VERIFIED MANUALLY
 
   // await verifyVotingEscrow(contractDeploymentCollection['VotingEscrow'], force);
@@ -78,7 +78,7 @@ export const verifyHoldrContracts = async function verifyHoldrContracts(
 
   // TO DEPLOY
 
-  // await verifyFeeDistributor(contractDeploymentCollection['FeeDistributor'], force);
+  await verifyFeeDistributor(contractDeploymentCollection['FeeDistributor'], force);
   // await verifyBribeVault(contractDeploymentCollection['BribeVault'], force);
   // await verifyRewardDistributor(contractDeploymentCollection['RewardDistributor'], force);
   // await verifyBalancerBribe(contractDeploymentCollection['BalancerBribe'], force);

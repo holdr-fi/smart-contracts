@@ -143,7 +143,7 @@ export const deployHoldrContracts = async function deployHoldrContracts(
   );
 
   // Require non-zero total supply for veHLDR
-  // const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
+  const feeDistributorDeployment: ContractDeployment = await deployFeeDistributor(votingEscrowDeployment.address);
 
   /*
    * Bribe contracts
@@ -183,8 +183,7 @@ export const deployHoldrContracts = async function deployHoldrContracts(
   contractDeploymentCollection[mainnetGaugeFactoryDeployment.name] = mainnetGaugeFactoryDeployment;
   contractDeploymentCollection[tokenholderFactoryDeployment.name] = tokenholderFactoryDeployment;
   contractDeploymentCollection[gaugeControllerQuerierDeployment.name] = gaugeControllerQuerierDeployment;
-
-  // contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
+  contractDeploymentCollection[feeDistributorDeployment.name] = feeDistributorDeployment;
   // contractDeploymentCollection[bribeVaultDeployment.name] = bribeVaultDeployment;
   // contractDeploymentCollection[rewardDistributorDeployment.name] = rewardDistributorDeployment;
   // contractDeploymentCollection[balancerBribeDeployment.name] = balancerBribeDeployment;
