@@ -1,3 +1,9 @@
 [submodule "pvt/lib/forge-std"]
 	path = pvt/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "pkg/deployments/holdr/contracts_repos/stable-pool-rate-providers"]
+	path = pkg/deployments/holdr/contracts_repos/stable-pool-rate-providers
+	url = https://github.com/holdr-fi/stable-pool-rate-providers.git
+[submodule "pkg/deployments/holdr/contracts_repos/wNEAR"]
+	path = pkg/deployments/holdr/contracts_repos/wNEAR
+	url = https://github.com/holdr-fi/wNEAR.git

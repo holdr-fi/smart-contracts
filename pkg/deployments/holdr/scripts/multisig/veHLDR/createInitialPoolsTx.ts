@@ -19,6 +19,10 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   const BSTN_ADDRESS = '0x9f1f933c660a1dc856f0e0fe058435879c5ccef0';
   const PLY_ADDRESS = '0x09c9d464b58d96837f8d8b6f4d9fe4ad408d3a4f';
   const TRI_ADDRESS = '0xFa94348467f64D5A457F75F8bc40495D33c65aBB';
+  const AUUSDC_ADDRESS = '0x4f0d864b1ABf4B701799a0b30b57A22dFEB5917b';
+  const AUUSDT_ADDRESS = '0xaD5A2437Ff55ed7A8Cad3b797b3eC7c5a19B1c54';
+  const HB_A_USDT_POOL = '0x0005b732f5434dbd39cc353d5795e71833820e67';
+  const HB_A_USDC_POOL = '0xc51d0a9bcb17a126e1a9f4950b259498abeba1e9';
 
   const vault = contractDeploymentCollection['Vault'].instance;
   const weightedPoolFactory = contractDeploymentCollection['WeightedPoolFactory'].instance;
@@ -46,24 +50,46 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
 
   // Use as example - https://etherscan.io/tx/0xa46ab001ffb9449792d5b959e8c973168a812cbe70fc30ae8f08a14cc9275fd9
 
-  // Need to wrap Flux or Pythnet Oracle contracts
-
-  // const usdt_usdc_create_params: NewStablePoolParams = {
-  //   name: 'Holdr USDT USDC Stable Pool',
-  //   symbol: 'USDT-USDC Stable Pool',
-  //   tokens: [USDT_ADDRESS, USDC_ADDRESS],
-  //   amplificationParameter: 5000,
-  //   rateProviders: ['0x8caCbA163be8070760F6DdADA7461a558519A9F1', '0x6D80Dc92E4599ADBaE3E4797EBE79c29d0f4c344'],
-  //   tokenRateCacheDurations: [0, 0],
+  // const stable_pool_create_params: NewStablePoolParams = {
+  //   name: 'Holdr Aurigami Boosted Pool (USDC)',
+  //   symbol: 'hb-a-USDC',
+  //   tokens: [AUUSDC_ADDRESS, USDC_ADDRESS],
+  //   amplificationParameter: 200,
+  //   rateProviders: ['0x247f8c7379C71d845687A7d9Ec642C3D09782Aa4', '0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB'],
+  //   tokenRateCacheDurations: [21600, 21600],
   //   exemptFromYieldProtocolFeeFlags: [false, false],
   //   swapFeePercentage: fp(0.0005),
   //   owner: ADMIN_ADDRESS,
   // };
 
-  // console.log(
-  //   'USDT-USDC Stable Pool: ',
-  //   await stablePoolFactory.populateTransaction.create(...Object.values(usdt_usdc_create_params))
-  // );
+  // const stable_pool_create_params: NewStablePoolParams = {
+  //   name: 'Holdr Aurigami Boosted Pool (USDT)',
+  //   symbol: 'hb-a-USDT',
+  //   tokens: [USDT_ADDRESS, AUUSDT_ADDRESS],
+  //   amplificationParameter: 200,
+  //   rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x9A1671e139332b7BfADc6E15360FD89da4399b52'],
+  //   tokenRateCacheDurations: [21600, 21600],
+  //   exemptFromYieldProtocolFeeFlags: [false, false],
+  //   swapFeePercentage: fp(0.0005),
+  //   owner: ADMIN_ADDRESS,
+  // };
+
+  const stable_pool_create_params: NewStablePoolParams = {
+    name: 'Holdr Aurigami Boosted StablePool',
+    symbol: 'hb-a-USD',
+    tokens: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+    amplificationParameter: 200,
+    rateProviders: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+    tokenRateCacheDurations: [21600, 21600],
+    exemptFromYieldProtocolFeeFlags: [false, false],
+    swapFeePercentage: fp(0.0005),
+    owner: ADMIN_ADDRESS,
+  };
+
+  console.log(
+    'Stable Pool: ',
+    await stablePoolFactory.populateTransaction.create(...Object.values(stable_pool_create_params))
+  );
 
   // 3. USDC/USDT/wNEAR
 
@@ -121,20 +147,20 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
 
   // 6. wNEAR/AURORA
 
-  const wnear_aurora_create_params: NewWeightedPoolParams = {
-    name: 'Holdr 80 wNEAR 20 AURORA',
-    symbol: '80wNEAR-20AURORA',
-    tokens: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[0],
-    normalizedWeights: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[1],
-    rateProviders: [ZERO_ADDRESS, ZERO_ADDRESS],
-    swapFeePercentage: fp(0.003),
-    owner: ADMIN_ADDRESS,
-  };
+  // const wnear_aurora_create_params: NewWeightedPoolParams = {
+  //   name: 'Holdr 80 wNEAR 20 AURORA',
+  //   symbol: '80wNEAR-20AURORA',
+  //   tokens: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[0],
+  //   normalizedWeights: assetHelpers.sortTokens([WNEAR_ADDRESS, AURORA_ADDRESS], [fp(0.8), fp(0.2)])[1],
+  //   rateProviders: [ZERO_ADDRESS, ZERO_ADDRESS],
+  //   swapFeePercentage: fp(0.003),
+  //   owner: ADMIN_ADDRESS,
+  // };
 
-  console.log(
-    '80wNEAR-20AURORA: ',
-    await weightedPoolFactory.populateTransaction.create(...Object.values(wnear_aurora_create_params))
-  );
+  // console.log(
+  //   '80wNEAR-20AURORA: ',
+  //   await weightedPoolFactory.populateTransaction.create(...Object.values(wnear_aurora_create_params))
+  // );
 
   // 7. HLDR50-USDC25-WETH25
 

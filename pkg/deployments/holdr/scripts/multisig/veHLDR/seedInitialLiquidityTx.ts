@@ -26,16 +26,22 @@ export const seedInitialLiquidityTx = async function seedInitialLiquidityTx(
   const BSTN_ADDRESS = '0x9f1f933c660a1dc856f0e0fe058435879c5ccef0';
   const PLY_ADDRESS = '0x09c9d464b58d96837f8d8b6f4d9fe4ad408d3a4f';
   const TRI_ADDRESS = '0xFa94348467f64D5A457F75F8bc40495D33c65aBB';
+  const AUUSDC_ADDRESS = '0x4f0d864b1ABf4B701799a0b30b57A22dFEB5917b';
+  const AUUSDT_ADDRESS = '0xaD5A2437Ff55ed7A8Cad3b797b3eC7c5a19B1c54';
 
   const HLDR80_WNEAR20_POOL = '0x190185164382d388ef829a3ad67998ab5792eea3';
   const HLDR50_USDC25_WETH25_POOL = '0x00055c916d93bb1809552430119149af858fbf06';
 
-  const USDC_USDT_STABLEPOOL = '0x480edf7ecb52ef9eace2346b84f29795429aa9c9';
+  const USDC_USDT_STABLEPOOL = '0xcb14c0bd41e6829caf3ebffe866592b338eed02c';
   const USDC40_USDT40_WNEAR20_POOL = '0x89bdd5d6b426c535127819abab51c4c2724d4e03';
   const WNEAR80_WETH20_POOL = '0x9eeebb9184031fbb78a4959ef820d8119d433979';
   const WNEAR80_WBTC20_POOL = '0xdb6b3d53d6f1087eac3f51dd803ccce54f607a6e';
   const WNEAR80_AURORA20_POOL = '0x2524a4d5588d15e10b7495edd548cc53b18db780';
   const AURORA25_BSTN25_PLY25_TRI25_POOL = '0x4ab6f40241f01c9f6dcf8cc154d54b05477551c7';
+
+  const HB_A_USDC_POOL = '0xc51d0a9bcb17a126e1a9f4950b259498abeba1e9';
+  const HB_A_USDT_POOL = '0x0005b732f5434dbd39cc353d5795e71833820e67';
+  const HB_A_USD_STABLE_POOL = '0x0b13a7f8cad36cb3c05051e5b98b0df654b6b90e';
 
   const vault = contractDeploymentCollection['Vault'].instance;
   const weightedPoolFactory = contractDeploymentCollection['WeightedPoolFactory'].instance;
@@ -72,33 +78,40 @@ export const seedInitialLiquidityTx = async function seedInitialLiquidityTx(
 
   // 2. USDC/USDT
 
-  // {
-  //   const pool = new Contract(USDC_USDT_STABLEPOOL, STABLE_POOL_ABI, provider);
-  //   const poolId = await pool.getPoolId();
-  //   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
-  //   const tokens = assetHelpers.sortTokens(
-  //     [USDC_USDT_STABLEPOOL, USDT_ADDRESS, USDC_ADDRESS],
-  //     [BigNumber.from('5192296858534827628530496329000000'), BigNumber.from('1000000'), BigNumber.from('1000000')]
-  //   );
-  //   const JoinKind = 0;
-  //   const sortedTokens = tokens[0];
-  //   const exactAmountsIn = tokens[1];
-  //   const abi = ['uint256', 'uint256[]'];
-  //   const data = [JoinKind, exactAmountsIn];
-  //   const userDataEncoded = defaultAbiCoder.encode(abi, data);
+  const hb_a_usdt = new Contract(HB_A_USDT_POOL, ERC20_ABI, provider);
+  const hb_a_usdc = new Contract(HB_A_USDC_POOL, ERC20_ABI, provider);
 
-  //   const joinPoolRequest: JoinPoolRequest = {
-  //     assets: sortedTokens,
-  //     maxAmountsIn: exactAmountsIn,
-  //     userData: userDataEncoded,
-  //     fromInternalBalance: false,
-  //   };
+  {
+    const pool = new Contract(HB_A_USD_STABLE_POOL, STABLE_POOL_ABI, provider);
+    const poolId = await pool.getPoolId();
+    const assetHelpers = new AssetHelpers(WETH_ADDRESS);
+    const tokens = assetHelpers.sortTokens(
+      [HB_A_USD_STABLE_POOL, HB_A_USDT_POOL, HB_A_USDC_POOL],
+      [
+        BigNumber.from('5192296858534827628530496329000000'),
+        (await hb_a_usdt.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
+        (await hb_a_usdc.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
+      ]
+    );
+    const JoinKind = 0;
+    const sortedTokens = tokens[0];
+    const exactAmountsIn = tokens[1];
+    const abi = ['uint256', 'uint256[]'];
+    const data = [JoinKind, exactAmountsIn];
+    const userDataEncoded = defaultAbiCoder.encode(abi, data);
 
-  //   console.log(
-  //     'USDC_USDT_STABLEPOOL seed liquidity: ',
-  //     await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
-  //   );
-  // }
+    const joinPoolRequest: JoinPoolRequest = {
+      assets: sortedTokens,
+      maxAmountsIn: exactAmountsIn,
+      userData: userDataEncoded,
+      fromInternalBalance: false,
+    };
+
+    console.log(
+      'Seed liquidity: ',
+      await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
+    );
+  }
 
   // 3. USDC/USDT/wNEAR
 
@@ -214,31 +227,31 @@ export const seedInitialLiquidityTx = async function seedInitialLiquidityTx(
 
   // 7. HLDR50-USDC25-WETH25
 
-  {
-    const pool = new Contract(HLDR50_USDC25_WETH25_POOL, WEIGHTED_POOL_ABI, provider);
-    const poolId = await pool.getPoolId();
-    const assetHelpers = new AssetHelpers(WETH_ADDRESS);
-    const tokens = assetHelpers.sortTokens(
-      [HLDR_ADDRESS, USDC_ADDRESS, WETH_ADDRESS],
-      [BigNumber.from('426646917032973000000'), BigNumber.from('5000000'), BigNumber.from('4269854824935950')]
-    );
-    const JoinKind = 0;
-    const sortedTokens = tokens[0];
-    const exactAmountsIn = tokens[1];
-    const abi = ['uint256', 'uint256[]'];
-    const data = [JoinKind, exactAmountsIn];
-    const userDataEncoded = defaultAbiCoder.encode(abi, data);
-    const joinPoolRequest: JoinPoolRequest = {
-      assets: sortedTokens,
-      maxAmountsIn: exactAmountsIn,
-      userData: userDataEncoded,
-      fromInternalBalance: false,
-    };
-    console.log(
-      'HLDR50_USDC25_WETH25_POOL seed liquidity: ',
-      await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
-    );
-  }
+  // {
+  //   const pool = new Contract(HLDR50_USDC25_WETH25_POOL, WEIGHTED_POOL_ABI, provider);
+  //   const poolId = await pool.getPoolId();
+  //   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
+  //   const tokens = assetHelpers.sortTokens(
+  //     [HLDR_ADDRESS, USDC_ADDRESS, WETH_ADDRESS],
+  //     [BigNumber.from('426646917032973000000'), BigNumber.from('5000000'), BigNumber.from('4269854824935950')]
+  //   );
+  //   const JoinKind = 0;
+  //   const sortedTokens = tokens[0];
+  //   const exactAmountsIn = tokens[1];
+  //   const abi = ['uint256', 'uint256[]'];
+  //   const data = [JoinKind, exactAmountsIn];
+  //   const userDataEncoded = defaultAbiCoder.encode(abi, data);
+  //   const joinPoolRequest: JoinPoolRequest = {
+  //     assets: sortedTokens,
+  //     maxAmountsIn: exactAmountsIn,
+  //     userData: userDataEncoded,
+  //     fromInternalBalance: false,
+  //   };
+  //   console.log(
+  //     'HLDR50_USDC25_WETH25_POOL seed liquidity: ',
+  //     await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
+  //   );
+  // }
 
   // 8. AURORA25-BSTN25-PLY25-TRI25
 
