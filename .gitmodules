@@ -7,3 +7,6 @@
 [submodule "pkg/deployments/holdr/contracts_repos/wNEAR"]
 	path = pkg/deployments/holdr/contracts_repos/wNEAR
 	url = https://github.com/holdr-fi/wNEAR.git
+[submodule "pkg/deployments/holdr/contracts_repos/veHLDR-fix"]
+	path = pkg/deployments/holdr/contracts_repos/veHLDR-fix
+	url = https://github.com/holdr-fi/veHLDR-fix.git
