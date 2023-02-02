@@ -148,4 +148,12 @@ export class VotingEscrowDeploymentHelper {
       }
     }
   }
+
+  async createMainnetGauge_noSave(poolAddress: string): Promise<void> {
+    const tx = await this.mainnetGaugeFactory.connect(this.signer).create(poolAddress);
+    const log = await tx.wait();
+    const gauge = log?.events[0].args[0];
+    await this.gaugeAdder.connect(this.signer).addEthereumGauge(gauge);
+    console.log(`Deployed gauge ${gauge} for pool ${poolAddress}`);
+  }
 }
