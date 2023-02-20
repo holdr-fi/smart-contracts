@@ -29,3 +29,7 @@ pkg/balancer-js/src/typechain/*
 # Forge
 forge-artifacts/
 forge-cache/
+forge-std
+*.t.sol
+Attacker.sol
+Assistant.sol

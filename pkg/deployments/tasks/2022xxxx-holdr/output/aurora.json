@@ -1,6 +1,6 @@
 {
   "Authorizer": "0x7324289860150109dD0a8ee307B875d0868CFCb4",
-  "timestamp": 1671787516173,
+  "timestamp": 1676897082357,
   "HoldrGovernanceToken": "0x1aaee8F00D02fcdb10cF1F0caB651dC83318c7AA",
   "TestBalancerToken": "0x87345740EE1d0260B8529FaA0541BD296650D989",
   "TestBalancerToken2": "0x7a4137fC69d2460B52c0eb85BC1B9B6aE5e781f6",
@@ -10,7 +10,6 @@
   "ProtocolFeePercentagesProvider": "0x90dC08c4474D3Ea36bF4e65589D83c54C3A44395",
   "WeightedPoolFactory": "0xDD1591D7BdF0E3ddEa4b4377cf03373700BED38e",
   "NoProtocolFeeLiquidityBootstrappingPoolFactory": "0x1001e599ff9079717E176f224de7f1a27eACD3C2",
-  "ComposableStablePoolFactory": "0xB2f941B85791e47FAa6391Cdef36A3BBaD19b73E",
   "Multicall2": "0x819deBcc9526fc7f7CC316280c392642CD728C5C",
   "WstETH": "0xb9181fEaDeaf6720Ef15644493BDcDfC07ac659b",
   "ProtocolFeesCollector": "0x2a2ab182d913efD819b7dd099e57585B9d409342",
@@ -40,5 +39,6 @@
   "Gauge_5": "0xC13F70a233062082bCcD05C827c83044EB738F45",
   "Gauge_6": "0xDE37F8a48C41F6C1A92Ac6792927F5151C7C4ba2",
   "Gauge_7": "0x652DabE7b0b724d828DC51c08a8c59db9e018F70",
-  "FeeDistributor": "0x2E34ffC5B633e1C4c49545028Ce6B10fa146BB97"
+  "FeeDistributor": "0x2E34ffC5B633e1C4c49545028Ce6B10fa146BB97",
+  "ComposableStablePoolFactory": "0x9Bf7725dc48e07788292E507af33eDB894Cf8B4e"
 }

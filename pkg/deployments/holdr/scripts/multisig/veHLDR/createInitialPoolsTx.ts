@@ -74,12 +74,24 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   //   owner: ADMIN_ADDRESS,
   // };
 
+  // const stable_pool_create_params: NewStablePoolParams = {
+  //   name: 'Holdr Aurigami Boosted StablePool',
+  //   symbol: 'hb-a-USD',
+  //   tokens: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+  //   amplificationParameter: 200,
+  //   rateProviders: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+  //   tokenRateCacheDurations: [21600, 21600],
+  //   exemptFromYieldProtocolFeeFlags: [false, false],
+  //   swapFeePercentage: fp(0.0005),
+  //   owner: ADMIN_ADDRESS,
+  // };
+
   const stable_pool_create_params: NewStablePoolParams = {
-    name: 'Holdr Aurigami Boosted StablePool',
-    symbol: 'hb-a-USD',
-    tokens: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+    name: 'Holdr USDT-USDC Stable Pool',
+    symbol: 'USDT-USDC Stable Pool',
+    tokens: [USDT_ADDRESS, USDC_ADDRESS],
     amplificationParameter: 200,
-    rateProviders: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+    rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB'],
     tokenRateCacheDurations: [21600, 21600],
     exemptFromYieldProtocolFeeFlags: [false, false],
     swapFeePercentage: fp(0.0005),

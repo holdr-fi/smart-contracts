@@ -32,7 +32,7 @@ export const seedInitialLiquidityTx = async function seedInitialLiquidityTx(
   const HLDR80_WNEAR20_POOL = '0x190185164382d388ef829a3ad67998ab5792eea3';
   const HLDR50_USDC25_WETH25_POOL = '0x00055c916d93bb1809552430119149af858fbf06';
 
-  const USDC_USDT_STABLEPOOL = '0xcb14c0bd41e6829caf3ebffe866592b338eed02c';
+  const USDC_USDT_STABLEPOOL = '0x2E884dB6D985A4887954bb0a8F45682Dc24ecB0d';
   const USDC40_USDT40_WNEAR20_POOL = '0x89bdd5d6b426c535127819abab51c4c2724d4e03';
   const WNEAR80_WETH20_POOL = '0x9eeebb9184031fbb78a4959ef820d8119d433979';
   const WNEAR80_WBTC20_POOL = '0xdb6b3d53d6f1087eac3f51dd803ccce54f607a6e';
@@ -78,20 +78,48 @@ export const seedInitialLiquidityTx = async function seedInitialLiquidityTx(
 
   // 2. USDC/USDT
 
-  const hb_a_usdt = new Contract(HB_A_USDT_POOL, ERC20_ABI, provider);
-  const hb_a_usdc = new Contract(HB_A_USDC_POOL, ERC20_ABI, provider);
+  // const hb_a_usdt = new Contract(HB_A_USDT_POOL, ERC20_ABI, provider);
+  // const hb_a_usdc = new Contract(HB_A_USDC_POOL, ERC20_ABI, provider);
+
+  // {
+  //   const pool = new Contract(HB_A_USD_STABLE_POOL, STABLE_POOL_ABI, provider);
+  //   const poolId = await pool.getPoolId();
+  //   const assetHelpers = new AssetHelpers(WETH_ADDRESS);
+  //   const tokens = assetHelpers.sortTokens(
+  //     [HB_A_USD_STABLE_POOL, HB_A_USDT_POOL, HB_A_USDC_POOL],
+  //     [
+  //       BigNumber.from('5192296858534827628530496329000000'),
+  //       (await hb_a_usdt.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
+  //       (await hb_a_usdc.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
+  //     ]
+  //   );
+  //   const JoinKind = 0;
+  //   const sortedTokens = tokens[0];
+  //   const exactAmountsIn = tokens[1];
+  //   const abi = ['uint256', 'uint256[]'];
+  //   const data = [JoinKind, exactAmountsIn];
+  //   const userDataEncoded = defaultAbiCoder.encode(abi, data);
+
+  //   const joinPoolRequest: JoinPoolRequest = {
+  //     assets: sortedTokens,
+  //     maxAmountsIn: exactAmountsIn,
+  //     userData: userDataEncoded,
+  //     fromInternalBalance: false,
+  //   };
+
+  //   console.log(
+  //     'Seed liquidity: ',
+  //     await vault.populateTransaction.joinPool(poolId, ADMIN_ADDRESS, ADMIN_ADDRESS, joinPoolRequest)
+  //   );
+  // }
 
   {
-    const pool = new Contract(HB_A_USD_STABLE_POOL, STABLE_POOL_ABI, provider);
+    const pool = new Contract(USDC_USDT_STABLEPOOL, STABLE_POOL_ABI, provider);
     const poolId = await pool.getPoolId();
     const assetHelpers = new AssetHelpers(WETH_ADDRESS);
     const tokens = assetHelpers.sortTokens(
-      [HB_A_USD_STABLE_POOL, HB_A_USDT_POOL, HB_A_USDC_POOL],
-      [
-        BigNumber.from('5192296858534827628530496329000000'),
-        (await hb_a_usdt.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
-        (await hb_a_usdc.balanceOf(ADMIN_ADDRESS)).mul(8).div(10),
-      ]
+      [USDC_USDT_STABLEPOOL, USDT_ADDRESS, USDC_ADDRESS],
+      [BigNumber.from('5192296858534827628530496329000000'), BigNumber.from('5000000'), BigNumber.from('5000000')]
     );
     const JoinKind = 0;
     const sortedTokens = tokens[0];

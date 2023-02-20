@@ -8,5 +8,5 @@ export const setupVotingEscrowSystem = async function setupVotingEscrowSystem(
   // await getVeSPT(contractDeploymentCollection);
   // await voteForGauge(contractDeploymentCollection);
   // await distributeRewards(contractDeploymentCollection);
-  await setupGauge(contractDeploymentCollection, '0x5FdFDF63E1D3c4c466578602Ea127DeCF024f394');
+  await setupGauge(contractDeploymentCollection, '0xC2ED122265FFCa6CF1DbaE4AF6c37D940FcDFa0E');
 };

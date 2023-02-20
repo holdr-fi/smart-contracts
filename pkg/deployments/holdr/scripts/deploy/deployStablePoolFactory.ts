@@ -8,7 +8,12 @@ export const deployStablePoolFactory = async function deployStablePoolFactory(
   force = false
 ): Promise<ContractDeployment> {
   const contractName = 'ComposableStablePoolFactory';
-  const constructorArgs = [vaultDeploymentAddress, protocolFeePercentagesProviderDeploymentAddress];
+  const constructorArgs = [
+    vaultDeploymentAddress,
+    protocolFeePercentagesProviderDeploymentAddress,
+    '{"name":"ComposableStablePoolFactory","version":3,"deployment":"20230206-composable-stable-pool-v3"}',
+    '{"name":"ComposableStablePool","version":3,"deployment":"20230206-composable-stable-pool-v3"}',
+  ];
   let instance: Contract;
   const predeployedInstance = await task.getPredeployedInstance(contractName);
   const [deployer] = await ethers.getSigners();
