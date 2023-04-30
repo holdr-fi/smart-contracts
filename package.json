@@ -25,7 +25,8 @@
   "scripts": {
     "build": "yarn workspaces foreach --parallel --verbose  run build",
     "lint": "yarn workspaces foreach --parallel --verbose run lint",
-    "test": "yarn workspaces foreach --parallel --verbose run test"
+    "test": "yarn workspaces foreach --parallel --verbose run test",
+    "holdr": "cd pkg/deployments && npm run holdr-deploy"
   },
   "workspaces": [
     "pkg/*",

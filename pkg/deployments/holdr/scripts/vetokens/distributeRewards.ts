@@ -23,6 +23,7 @@ export const distributeRewards = async function distributeRewards(
   const hldrMinted = await hldr.balanceOf(tokenholder.address);
   await tokenholder.connect(deployer).withdrawFunds(deployer.address, hldrMinted);
 
+  logger.info(`Minted ${ethers.utils.formatUnits(hldrMinted, 18)} HLDR`);
   logger.info('Successful Tokenholder.withdraw(), now calling FeeDistrbutor.depositToken()');
 
   // 3. Deposit HLDR into FeeDistributor

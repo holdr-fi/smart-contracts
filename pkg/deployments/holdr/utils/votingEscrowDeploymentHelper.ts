@@ -156,4 +156,14 @@ export class VotingEscrowDeploymentHelper {
     await this.gaugeAdder.connect(this.signer).addEthereumGauge(gauge);
     console.log(`Deployed gauge ${gauge} for pool ${poolAddress}`);
   }
+
+  async killGauge(gaugeAddress: string): Promise<void> {
+    // const tx = await this.authorizerAdaptor.connect(this.signer).performAction(gaugeAddress, '0x4c2c4c5c1');
+    // const log = await tx.wait();
+    // console.log(`Killed gauge ${gaugeAddress}`);
+
+    console.log(await this.authorizerAdaptor.populateTransaction.performAction(gaugeAddress, '0xab8f0945'));
+
+    // const txData = targetContract.interface.encodeFunctionData(functionName, parameters);
+  }
 }

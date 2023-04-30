@@ -21,8 +21,13 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   const TRI_ADDRESS = '0xFa94348467f64D5A457F75F8bc40495D33c65aBB';
   const AUUSDC_ADDRESS = '0x4f0d864b1ABf4B701799a0b30b57A22dFEB5917b';
   const AUUSDT_ADDRESS = '0xaD5A2437Ff55ed7A8Cad3b797b3eC7c5a19B1c54';
-  const HB_A_USDT_POOL = '0x0005b732f5434dbd39cc353d5795e71833820e67';
-  const HB_A_USDC_POOL = '0xc51d0a9bcb17a126e1a9f4950b259498abeba1e9';
+  const HB_A_USDC_POOL = '0x42E661a89C6258e70c6AAe77f3061f9f7d4A918E';
+  const HB_A_USDT_POOL = '0x01B02b2eB5dD299DB4A8c089D34dA0796B0021DD';
+
+  const BASTION_USDC_ADDRESS = '0xe5308dc623101508952948b141fD9eaBd3337D99';
+  const BASTION_USDT_ADDRESS = '0x845E15A441CFC1871B7AC610b0E922019BaD9826';
+  const HB_B_USDC_POOL = '0x079a5925D6c334799D1252775cab9BD3aCe26822';
+  const HB_B_USDT_POOL = '0x19252cE2f1c296E25bAd5D241e3C5AFE78C864EB';
 
   const vault = contractDeploymentCollection['Vault'].instance;
   const weightedPoolFactory = contractDeploymentCollection['WeightedPoolFactory'].instance;
@@ -51,11 +56,11 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   // Use as example - https://etherscan.io/tx/0xa46ab001ffb9449792d5b959e8c973168a812cbe70fc30ae8f08a14cc9275fd9
 
   // const stable_pool_create_params: NewStablePoolParams = {
-  //   name: 'Holdr Aurigami Boosted Pool (USDC)',
-  //   symbol: 'hb-a-USDC',
-  //   tokens: [AUUSDC_ADDRESS, USDC_ADDRESS],
+  //   name: 'Holdr Bastion Boosted Pool (USDC)',
+  //   symbol: 'hb-b-USDC',
+  //   tokens: [USDC_ADDRESS, BASTION_USDC_ADDRESS],
   //   amplificationParameter: 200,
-  //   rateProviders: ['0x247f8c7379C71d845687A7d9Ec642C3D09782Aa4', '0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB'],
+  //   rateProviders: ['0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB', '0x22dC4E88cEa43fC873fb5620874A0c45cbBb3635'],
   //   tokenRateCacheDurations: [21600, 21600],
   //   exemptFromYieldProtocolFeeFlags: [false, false],
   //   swapFeePercentage: fp(0.0005),
@@ -63,23 +68,11 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   // };
 
   // const stable_pool_create_params: NewStablePoolParams = {
-  //   name: 'Holdr Aurigami Boosted Pool (USDT)',
-  //   symbol: 'hb-a-USDT',
-  //   tokens: [USDT_ADDRESS, AUUSDT_ADDRESS],
+  //   name: 'Holdr Bastion Boosted Pool (USDT)',
+  //   symbol: 'hb-b-USDT',
+  //   tokens: [USDT_ADDRESS, BASTION_USDT_ADDRESS],
   //   amplificationParameter: 200,
-  //   rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x9A1671e139332b7BfADc6E15360FD89da4399b52'],
-  //   tokenRateCacheDurations: [21600, 21600],
-  //   exemptFromYieldProtocolFeeFlags: [false, false],
-  //   swapFeePercentage: fp(0.0005),
-  //   owner: ADMIN_ADDRESS,
-  // };
-
-  // const stable_pool_create_params: NewStablePoolParams = {
-  //   name: 'Holdr Aurigami Boosted StablePool',
-  //   symbol: 'hb-a-USD',
-  //   tokens: [HB_A_USDT_POOL, HB_A_USDC_POOL],
-  //   amplificationParameter: 200,
-  //   rateProviders: [HB_A_USDT_POOL, HB_A_USDC_POOL],
+  //   rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x9865F88daad003b6F10FF59C0446E3Cd263076Af'],
   //   tokenRateCacheDurations: [21600, 21600],
   //   exemptFromYieldProtocolFeeFlags: [false, false],
   //   swapFeePercentage: fp(0.0005),
@@ -87,16 +80,28 @@ export const createInitialPoolsTx = async function createInitialPoolsTx(
   // };
 
   const stable_pool_create_params: NewStablePoolParams = {
-    name: 'Holdr USDT-USDC Stable Pool',
-    symbol: 'USDT-USDC Stable Pool',
-    tokens: [USDT_ADDRESS, USDC_ADDRESS],
+    name: 'Holdr Bastion Boosted StablePool',
+    symbol: 'hb-b-USD',
+    tokens: [HB_B_USDC_POOL, HB_B_USDT_POOL],
     amplificationParameter: 200,
-    rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB'],
+    rateProviders: [HB_B_USDC_POOL, HB_B_USDT_POOL],
     tokenRateCacheDurations: [21600, 21600],
     exemptFromYieldProtocolFeeFlags: [false, false],
     swapFeePercentage: fp(0.0005),
     owner: ADMIN_ADDRESS,
   };
+
+  // const stable_pool_create_params: NewStablePoolParams = {
+  //   name: 'Holdr USDT-USDC Stable Pool',
+  //   symbol: 'USDT-USDC Stable Pool',
+  //   tokens: [USDT_ADDRESS, USDC_ADDRESS],
+  //   amplificationParameter: 200,
+  //   rateProviders: ['0x723Da95511ebe7320AD22D92fa273A0EAf1993D1', '0x6e2f7a0291872380292b40dEaC7F4dcD587daaAB'],
+  //   tokenRateCacheDurations: [21600, 21600],
+  //   exemptFromYieldProtocolFeeFlags: [false, false],
+  //   swapFeePercentage: fp(0.0005),
+  //   owner: ADMIN_ADDRESS,
+  // };
 
   console.log(
     'Stable Pool: ',

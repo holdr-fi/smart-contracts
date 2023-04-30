@@ -17,11 +17,11 @@ async function main() {
   const contractDeploymentCollection: ContractDeploymentCollection = await deployHoldrContracts();
   // await verifyHoldrContracts(contractDeploymentCollection, true);
 
-  // await setupVotingEscrowSystem(contractDeploymentCollection);
+  await setupVotingEscrowSystem(contractDeploymentCollection);
   // await setupBribingSystem(contractDeploymentCollection);
   // await updateBribes(contractDeploymentCollection);
   // await setupLBP(contractDeploymentCollection);
-  await getMultiSigTx(contractDeploymentCollection);
+  // await getMultiSigTx(contractDeploymentCollection);
 }
 
 main()
