@@ -1,4 +1,4 @@
-import { BigNumber as BN, Contract } from 'ethers';
+import { BigNumber as BN, BigNumber, Contract } from 'ethers';
 import { ContractDeploymentCollection } from '../../types';
 import { ethers, logger, task } from '../../input';
 import BALTokenHolderABI from '../../../tasks/2022xxxx-holdr/abi/BALTokenHolder.json';
@@ -29,5 +29,5 @@ export const distributeRewards = async function distributeRewards(
   // 3. Deposit HLDR into FeeDistributor
   await feeDistributor.connect(deployer).depositToken(hldr.address, hldrMinted);
 
-  logger.info('Successful FeeDistrbutor.depositToken()');
+  logger.info(`Successful FeeDistrbutor.depositToken() for ${ethers.utils.formatUnits(hldrMinted, 18)} HLDR`);
 };
